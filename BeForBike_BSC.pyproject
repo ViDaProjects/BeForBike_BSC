@@ -1,0 +1,20 @@
+{
+    "files": [
+        "mainwindow.py",
+        "form.ui",
+        "ui_form.py",
+        "icons/arrow-left (1).svg",
+        "icons/arrow-right (6).svg",
+        "icons/arrow-right (7).svg",
+        "icons/bike (2).png",
+        "icons/map_example.jpg",
+        "icons/map-pin.svg",
+        "icons/rss.svg",
+        "icons/smartphone (3).svg",
+        ".gitignore",
+        "comm_protocol.py",
+        "comm_protocol_example.py",
+        "gps_map.py",
+        "map.qml"
+    ]
+}
