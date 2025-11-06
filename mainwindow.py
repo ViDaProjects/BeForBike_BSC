@@ -3,6 +3,7 @@ import sys
 import signal
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout
 from PySide6.QtCore import QTimer
+from queue import Queue
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -10,6 +11,7 @@ from PySide6.QtCore import QTimer
 #     pyside2-uic form.ui -o ui_form.py
 from ui_form import Ui_MainWindow
 from gps_map import MapWidget
+#from not_used.gps_system import GpsGatherThread, GpsProcessorThread, MapWidget
 
 # Sample NMEA data simulating a short path
 # (Coordinates are for Curitiba, Brazil)
@@ -91,7 +93,11 @@ class MainWindow(QMainWindow):
         self.ui.start_button.clicked.connect(self.map_widget.start_plotting)
         self.ui.stop_button.clicked.connect(self.map_widget.stop_plotting)
 
-        # --- Simulation Logic ---
+        #Threads
+        #self.process_gps_queue = Queue()
+        #self.gps_gather = GpsGatherThread(self.process_gps_queue, self)
+
+        """# --- Simulation Logic ---
         self._sim_index = 0
         self.sim_timer = QTimer(self)
         self.sim_timer.setInterval(2000) # Send new data every 2 seconds
@@ -100,7 +106,7 @@ class MainWindow(QMainWindow):
         # Send first data point immediately to center the map
         self.send_sim_data()
         # Start the timer
-        self.sim_timer.start()
+        self.sim_timer.start()"""
 
     def send_sim_data(self):
         """Simulates receiving a NMEA sentence."""
