@@ -6,20 +6,34 @@ import QtPositioning
 Item {
     width: 800
     height: 600
-
+    Plugin {
+        id: offlineOsm
+        name: "osm"
+        
+        PluginParameter { 
+            name: "osm.mapping.offline.directory";
+            value: Qt.resolvedUrl("mapa2_curitiba")        
+        } 
+        
+        PluginParameter { 
+            name: "osm.mapping.offline.enabled";
+            value: true 
+        }
+        // Adicione esta linha para garantir que o Qt não busque dados de roteamento online, etc.
+        PluginParameter { name: "osm.mapping.providersrepository.disabled"; value: true }
+        
+    }
     // The Map component
     Map {
         id: map
         anchors.fill: parent
+        plugin: offlineOsm
 
-        // Use the OpenStreetMap plugin
-        plugin: Plugin {
-            name: "osm"
-        }
+
 
         // Center the map on the current position from the Python backend
         center: map_backend.currentPosition
-        zoomLevel: 16 // Initial zoom
+        zoomLevel: 19 // Initial zoom
 
         // --- 1. The Path Polyline ---
         // This draws the recorded path
