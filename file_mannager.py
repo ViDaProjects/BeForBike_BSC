@@ -24,7 +24,7 @@ class FileMannagerThread(QThread):
         self.SendDataQueue = SendDataQueue
         self.CreateMsgQueue = CreateMsgQueue
 
-        self.pasta_alvo = Path("./rides")
+        self.pasta_alvo = Path("/home/joao/faculdade/oficinas3/fileCreator/rides")
         self.count_rides_file = self.pasta_alvo / "ride_count.txt"
         self.app = app
 
@@ -123,45 +123,58 @@ class FileMannagerThread(QThread):
             logging.error(f"Erro ao obter ID da ride: {e}")
 
     def save_data(self,file_name, lista_dados):
-     
+        
         try:
-            with open(file_name, "a") as file:
-                json.dump(lista_dados, file, indent=4) # indent=4 é opcional (para legibilidade)                file.write(lista_dados)                
+            logging.info(f"salvando dados")
+
+            full_path = self.pasta_alvo / file_name
+            with open(full_path, "w",encoding="UTF-8") as file:
+                logging.info(f"salvando dados em {full_path}")
+
+                json.dump(lista_dados, file, indent=4) # indent=4 é opcional (para legibilidade)               
         except Exception as e:
             logging.error(f"Erro ao salvar dados em {file_name}: {e}")
     
     def delete_file(self, file_name):
         try:
-            if file_name in self.pasta_alvo.glob("*.json"):
-                file_path = self.pasta_alvo / file_name
-                file_path.unlink() 
-            logging.info("Arquivo ride.json deletado com sucesso.")
+            file_path = self.pasta_alvo / file_name
+            file_path.unlink() 
+            logging.info(f"Arquivo {file_name} deletado com sucesso.")
+            
         except FileNotFoundError:
-            logging.warning("Arquivo ride.json não encontrado para deleção.")
+            logging.warning(f"Arquivo {file_name} não encontrado para deleção.")
         except Exception as e:
-            logging.error(f"Erro ao deletar arquivo ride.json: {e}")
+            logging.error(f"Erro ao deletar arquivo {file_name}: {e}")
+
 
 
     def search_file(self):
         try:
-            data = RideDataMsg()
             for arquivo in self.pasta_alvo.glob("*.json"):
-                data.file_name = arquivo.name
+                #data.file_name = arquivo.name
                 #data_list = [{"filename":arquivo.name}]
                 with arquivo.open('r', encoding='utf-8') as file:
                     try:
-                        data.telemetry_log = [json.dumps(item) for item in json.load(file)]
+                        logging.info(f"Arquivo encontrado")
+
+                        #telemetry_log = [json.dumps(item) for item in json.load(file)]
+                        telemetry_log = json.load(file)
+                        print(telemetry_log)
+                        data = RideDataMsg(file_name=arquivo.name, telemetry_log=telemetry_log)
+
                         #data_list.extend(json.load(file))
                     except json.JSONDecodeError as e:
-                        print(f"AVISO: Linha mal for    matada no arquivo {arquivo.name}: {e}")
+                        logging.error(f"Erro ao procurar o arquivo ride.json: {e}")
 
                 if len(data.telemetry_log) is not None:
                     self.SendDataQueue.put(data)
 
         except FileNotFoundError:
-            print(f"Erro: A pasta alvo '{self.pasta_alvo}' não foi encontrada.")
+            logging.error("Pasta de rides não encontrada.")
+
         except Exception as e:
-            print(f"Erro inesperado ao processar arquivos: {e}")
+            logging.error(f"Erro ao deletar arquivo ride.json: {e}")
+
 if __name__ == "__main__":
     app = QCoreApplication(sys.argv)
     
