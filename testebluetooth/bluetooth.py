@@ -8,13 +8,14 @@ from PySide6.QtCore import Slot, QThread, QSocketNotifier, QTimer, Signal
 from bleak import BleakClient, BleakScanner
 from queue import Queue, Empty
 from collections import deque
-from comm_protocol import FileManagerMsg, FileMngMsgId, RideDataMsg
+from comm_protocol import FileManagerMsg, FileMngMsgId, RideDataMsg, CrankReading
 import gzip
+
 
 # --- Constantes de UUIDs Usadas por esta Biblioteca ---
 # CHARACTERISTIC_UUID_TX = "0000ffe1-0000-1000-8000-00805f9b34fb"
 CHARACTERISTIC_UUID_TX = "12345678-1234-5678-1234-56789abcdef0"
-UART_SERVICE_UUID_RX = "0000ffe0-0000-1000-8000-00805f9b34fb"
+UART_SERVICE_UUID_RX = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
 # 1. A classe agora herda de QThread
 class BleManager(QThread):
@@ -26,7 +27,7 @@ class BleManager(QThread):
     device_disconnected = Signal(str)
     device_connection_failed = Signal(str)
 
-    def __init__(self, fixed_mac = "01:23:45:67:90:E7", company_id, secret_key, sendRideDataQueue: Queue, ProcessCrankDataQueue: Queue, FileManagerQueue: Queue, parent=None):
+    def __init__(self, fixed_mac, company_id, secret_key, sendRideDataQueue: Queue, ProcessCrankDataQueue: Queue, FileManagerQueue: Queue, parent=None):
         # 2. Construtor do QThread é chamado
         super().__init__(parent)
         
@@ -138,7 +139,7 @@ class BleManager(QThread):
         # (self.nano_buffer não foi definido no init, adicionando)
         if not hasattr(self, 'nano_buffer'):
             self.nano_buffer = b""
-            
+        
         self.nano_buffer += data
         while b"\n" in self.nano_buffer:
             try:
@@ -157,7 +158,7 @@ class BleManager(QThread):
             except json.JSONDecodeError as e:
                 logging.error(f"Erro ao decodificar JSON de {address}: {e}. String: '{message_str}'")
                 continue
-            logging.info(f">>> [THREAD PRINCIPAL] Recebeu JSON de {address}: {data_dict}")
+            #logging.info(f">>> [THREAD PRINCIPAL] Recebeu JSON de {address}: {data_dict}")
             """         debug
             self.latest_received_data[address] = data_dict
 
@@ -168,8 +169,10 @@ class BleManager(QThread):
             except Exception as e:
                 logging.error(f"Erro ao salvar dado no arquivo de log: {e}")
 
-            """            
-            self.ProcessCrankDataQueue.put(data_dict)
+            """
+            reading = CrankReading(data_dict['w'], data_dict['a'])
+            #logging.info(reading)
+            self.ProcessCrankDataQueue.put(reading)
 
     def _disconnect_callback(self, client):
         address = client.address

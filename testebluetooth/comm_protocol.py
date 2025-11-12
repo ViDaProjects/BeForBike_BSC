@@ -60,6 +60,16 @@ class CrankData:
         return CrankData(**data)
 
 @dataclass
+class CrankReading:
+    w: float
+    a: float
+
+@dataclass
+class PowerData:
+    power: float
+    cadence: float
+
+@dataclass
 class PacketInfo:
     date: str
     time: str
