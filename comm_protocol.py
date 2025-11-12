@@ -18,6 +18,9 @@ class TelemetryOrigin(Enum):
     GPS = auto()
     CRANK = auto()
 
+class GpsSentenceType(Enum):
+    GGA = auto()
+    RMC = auto()
 
 # ============================================================
 #  BASIC DATA STRUCTURES
@@ -25,8 +28,8 @@ class TelemetryOrigin(Enum):
 
 @dataclass
 class GpsSentences:
-    gga: str = None
-    rmc: str = None
+    type: GpsSentenceType
+    data: str
 
 @dataclass
 class GpsData:
@@ -102,7 +105,7 @@ class TelemetryMsg:
     """ Message containing a snapshot of sensor and GPS telemetry data.
     Goes to: AddRideDataQueue
     Sender: MsgCreatorThread
-    Receiver: RideThread
+    Receiver: RideThread, MainWindowThread
     """
     info: PacketInfo
     gps: GpsData

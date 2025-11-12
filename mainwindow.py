@@ -2,16 +2,20 @@
 import sys
 import signal
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Slot, Signal
 from queue import Queue
+import logging
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py, or
 #     pyside2-uic form.ui -o ui_form.py
 from ui_form import Ui_MainWindow
-from gps_map import MapWidget
-#from not_used.gps_system import GpsGatherThread, GpsProcessorThread, MapWidget
+#from gps_map import MapWidget
+from gps_system import GpsGatherThread, GpsProcessorThread, TestGpsThread, MapWidget
+from comm_protocol import TelemetryMsg
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Sample NMEA data simulating a short path
 # (Coordinates are for Curitiba, Brazil)
@@ -81,6 +85,8 @@ SIM_NMEA_DATA = [
 ]
 
 class MainWindow(QMainWindow):
+    update_rtc_by_gps = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
@@ -89,13 +95,27 @@ class MainWindow(QMainWindow):
         map_layout = QVBoxLayout(self.ui.map_frame)
         map_layout.addWidget(self.map_widget)
 
+        #variables
+        self.has_fix_position: bool = False
+        self.its_first_fix = True
+
         #For example, connect a button:
         self.ui.start_button.clicked.connect(self.map_widget.start_plotting)
         self.ui.stop_button.clicked.connect(self.map_widget.stop_plotting)
 
+        #Queues
+        self.process_gps_queue = Queue()
+        #self.show_data_queue = Queue()
+
         #Threads
-        #self.process_gps_queue = Queue()
-        #self.gps_gather = GpsGatherThread(self.process_gps_queue, self)
+        self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
+        self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue)
+        #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
+
+        #Start threads
+        self.gps_gather_thread.start()
+        self.gps_processor_thread.start()
+        #self.gps_tester_thread.start()
 
         """# --- Simulation Logic ---
         self._sim_index = 0
@@ -108,6 +128,15 @@ class MainWindow(QMainWindow):
         # Start the timer
         self.sim_timer.start()"""
 
+        #Connections
+        self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
+
+    def closeEvent(self, event):
+        self.gps_gather_thread.stop()
+        self.gps_processor_thread.stop()
+        self.gps_tester_thread.stop()
+        event.accept()
+
     def send_sim_data(self):
         """Simulates receiving a NMEA sentence."""
         if self._sim_index < len(SIM_NMEA_DATA):
@@ -118,6 +147,56 @@ class MainWindow(QMainWindow):
         else:
             print("End of simulation data.")
             self.sim_timer.stop()
+
+    @Slot()
+    def update_ui_with_msg_creator_data(self, data: TelemetryMsg):
+
+        #if is riding
+        #atualizar labels do crank
+        #if Not riding
+        #labels with --
+
+        #Ver o que mandei pro joao
+
+        #gps
+        #Update gps data: satellities and quality labels
+        self.ui.satelites_label.setText(str(data.gps.fix_satellites))
+        self.ui.fix_quality_label.setText(str(data.gps.fix_quality))
+
+        #update map
+        self.map_widget.update_map_plotting(data.gps.latitude, data.gps.longitude, data.gps.altitude)
+
+        #Update GPS icon
+        if data.gps.fix_quality > 0 and not self.has_fix_position:
+            #set green icon -------------------------
+            self.has_fix_position = True
+            if self.its_first_fix:
+                self.update_rtc_by_gps.emit()
+                self.its_first_fix = False
+
+        elif data.gps.fix_quality == 0 and self.has_fix_position:
+            #set gray icon ---------------------------
+            self.has_fix_position = False
+
+
+    @Slot()
+    def update_datetime_labels(self):
+        pass
+
+    @Slot()
+    def update_blinkers_icons(self):
+        pass
+
+    @Slot()
+    def change_app_bt_icon(self, state):
+        pass
+
+    @Slot()
+    def change_crank_bt_icon(self, state):
+        pass
+
+    def clear_crank_data_labels(self):
+        pass
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -130,7 +209,7 @@ if __name__ == "__main__":
     widget = MainWindow()
     widget.showFullScreen()
 
-    print("Running HMI")
+    logging.info("Running HMI")
     # 2. The try/except block is no longer necessary here
     # as the signal handler will handle the Ctrl+C directly.
     # The application will terminate correctly when SIGINT is received.

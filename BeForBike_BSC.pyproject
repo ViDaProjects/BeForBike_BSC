@@ -13,10 +13,8 @@
         "icons/smartphone (3).svg",
         ".gitignore",
         "comm_protocol.py",
-        "comm_protocol_example.py",
-        "gps_map.py",
         "map.qml",
-        "not_used/gps_system.py",
+        "gps_system.py",
         "not_used/utils.py"
     ]
 }

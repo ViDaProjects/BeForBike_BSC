@@ -120,7 +120,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="satelites_label">
+           <widget class="QLabel" name="satellities_label">
             <property name="minimumSize">
              <size>
               <width>20</width>

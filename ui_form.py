@@ -73,13 +73,13 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_11.addWidget(self.label_19, 0, Qt.AlignmentFlag.AlignLeft)
 
-        self.satelites_label = QLabel(self.frame_5)
-        self.satelites_label.setObjectName(u"satelites_label")
-        self.satelites_label.setMinimumSize(QSize(20, 0))
-        self.satelites_label.setMaximumSize(QSize(20, 16777215))
-        self.satelites_label.setFont(font1)
+        self.satellities_label = QLabel(self.frame_5)
+        self.satellities_label.setObjectName(u"satellities_label")
+        self.satellities_label.setMinimumSize(QSize(20, 0))
+        self.satellities_label.setMaximumSize(QSize(20, 16777215))
+        self.satellities_label.setFont(font1)
 
-        self.horizontalLayout_11.addWidget(self.satelites_label)
+        self.horizontalLayout_11.addWidget(self.satellities_label)
 
         self.label_23 = QLabel(self.frame_5)
         self.label_23.setObjectName(u"label_23")
@@ -485,7 +485,7 @@ class Ui_MainWindow(object):
         self.label_20.setText("")
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"GPS", None))
         self.label_19.setText("")
-        self.satelites_label.setText(QCoreApplication.translate("MainWindow", u"05", None))
+        self.satellities_label.setText(QCoreApplication.translate("MainWindow", u"05", None))
         self.label_23.setText("")
         self.label_25.setText(QCoreApplication.translate("MainWindow", u"Fix quality:", None))
         self.fix_quality_label.setText(QCoreApplication.translate("MainWindow", u"1", None))
