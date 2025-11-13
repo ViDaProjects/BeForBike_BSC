@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'form.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.0
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -395,7 +395,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.blinker_label_left = QLabel(self.blinker_frame_left)
         self.blinker_label_left.setObjectName(u"blinker_label_left")
-        self.blinker_label_left.setPixmap(QPixmap(u"icons/arrow-left (1).svg"))
+        self.blinker_label_left.setPixmap(QPixmap(u"icons/arrow_left_off.svg"))
         self.blinker_label_left.setScaledContents(False)
         self.blinker_label_left.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.blinker_label_left.setWordWrap(False)
@@ -416,7 +416,7 @@ class Ui_MainWindow(object):
         self.blinker_label_right = QLabel(self.blinker_frame_right)
         self.blinker_label_right.setObjectName(u"blinker_label_right")
         self.blinker_label_right.setLineWidth(4)
-        self.blinker_label_right.setPixmap(QPixmap(u"icons/arrow-right (7).svg"))
+        self.blinker_label_right.setPixmap(QPixmap(u"icons/arrow_right_off.svg"))
 
         self.verticalLayout_6.addWidget(self.blinker_label_right)
 

@@ -6,8 +6,8 @@ from rpi_ws281x import *
 from gpiozero import Button
 
 SERVO_PIN = 12
-LEFT_BUTTON_PIN = 26
-RIGHT_BUTTON_PIN = 23
+LEFT_BUTTON_PIN = 5
+RIGHT_BUTTON_PIN = 6
 
 LED_COUNT = 6
 LED_PIN = 18
@@ -24,12 +24,14 @@ BLINK_INTERVAL_MS = 500
 class BlinkerSystemWorker(QObject):
     finished = Signal()
     _buttonPressed = Signal(str)
+    blinkerDeactivated = Signal(str)
 
     def __init__(self):
         super().__init__()
         self.is_busy = False
         self.servo = None
         self.leds = None
+        self.blinker_direction = ""
 
     @Slot()
     def setup_hardware(self):
@@ -83,6 +85,9 @@ class BlinkerSystemWorker(QObject):
         self._turn_leds_off()
         self.is_busy = False
 
+        #Send signal to UI to disable arrow icon
+        self.blinkerDeactivated.emit(self.blinker_direction)
+
     @Slot(str)
     def do_trigger_blink(self, direction):
         if self.is_busy:
@@ -90,7 +95,7 @@ class BlinkerSystemWorker(QObject):
 
         self.is_busy = True
         self._buttonPressed.emit(direction)
-        
+        self.blinker_direction = direction
         angle = LEFT_ANGLE if direction == "left" else RIGHT_ANGLE
         self.servo.ChangeDutyCycle(angle)
         

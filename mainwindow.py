@@ -3,6 +3,7 @@ import sys
 import signal
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout
 from PySide6.QtCore import QTimer, Slot, Signal
+from PySide6.QtGui import QPixmap
 from queue import Queue
 import logging
 
@@ -14,6 +15,7 @@ from ui_form import Ui_MainWindow
 #from gps_map import MapWidget
 from gps_system import GpsGatherThread, GpsProcessorThread, TestGpsThread, MapWidget
 from comm_protocol import TelemetryMsg
+from blinker_module import BlinkerSystem
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -87,13 +89,18 @@ SIM_NMEA_DATA = [
 class MainWindow(QMainWindow):
     update_rtc_by_gps = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, app_instance, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        #Map
         self.map_widget = MapWidget()
         map_layout = QVBoxLayout(self.ui.map_frame)
         map_layout.addWidget(self.map_widget)
+
+        #Blinker
+        self.blinker = BlinkerSystem(app_instance)
 
         #variables
         self.has_fix_position: bool = False
@@ -130,6 +137,8 @@ class MainWindow(QMainWindow):
 
         #Connections
         self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
+        self.blinker.blinkerActivated.connect(self.active_blinker_icon)
+        self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
 
     def closeEvent(self, event):
         self.gps_gather_thread.stop()
@@ -160,7 +169,7 @@ class MainWindow(QMainWindow):
 
         #gps
         #Update gps data: satellities and quality labels
-        self.ui.satelites_label.setText(str(data.gps.fix_satellites))
+        self.ui.satellities_label.setText(str(data.gps.fix_satellites))
         self.ui.fix_quality_label.setText(str(data.gps.fix_quality))
 
         #update map
@@ -183,9 +192,23 @@ class MainWindow(QMainWindow):
     def update_datetime_labels(self):
         pass
 
-    @Slot()
-    def update_blinkers_icons(self):
-        pass
+    @Slot(str)
+    def active_blinker_icon(self, direction):
+        if direction == "left":
+            pixmap = QPixmap("icons/arrow_left_on.svg")
+            self.ui.blinker_label_left.setPixmap(pixmap)
+        elif direction == "right":
+            pixmap = QPixmap("icons/arrow_right_on.svg")
+            self.ui.blinker_label_right.setPixmap(pixmap)
+
+    @Slot(str)
+    def deactive_blinker_icon(self, direction):
+        if direction == "left":
+            pixmap = QPixmap("icons/arrow_left_off.svg")
+            self.ui.blinker_label_left.setPixmap(pixmap)
+        elif direction == "right":
+            pixmap = QPixmap("icons/arrow_right_off.svg")
+            self.ui.blinker_label_right.setPixmap(pixmap)
 
     @Slot()
     def change_app_bt_icon(self, state):
@@ -206,7 +229,7 @@ if __name__ == "__main__":
     # while the Qt event loop is running.
     signal.signal(signal.SIGINT, signal.SIG_DFL) # <<< Add this line
 
-    widget = MainWindow()
+    widget = MainWindow(app)
     widget.showFullScreen()
 
     logging.info("Running HMI")

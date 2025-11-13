@@ -133,7 +133,7 @@ class GpsProcessorThread(QThread):
             if self._cached_gga.timestamp == self._cached_rmc.timestamp:
 
                 # Check if altitude is None (or a non-numeric type) and set a default
-                if self.cached_gga.altitude is None:
+                if self._cached_gga.altitude is None:
                     safe_altitude = 0.0
                 else:
                     # Ensure it is a float if it exists
