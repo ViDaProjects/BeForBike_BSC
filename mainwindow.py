@@ -96,12 +96,12 @@ class MainWindow(QMainWindow):
         #self.show_data_queue = Queue()
 
         #Threads
-        self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
+        #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
         self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
 
         #Start threads
-        self.gps_gather_thread.start()
+        #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
         #self.gps_tester_thread.start()
 
@@ -122,9 +122,9 @@ class MainWindow(QMainWindow):
         self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
 
     def closeEvent(self, event):
-        self.gps_gather_thread.stop()
+        #self.gps_gather_thread.stop()
         self.gps_processor_thread.stop()
-        self.gps_tester_thread.stop()
+        #self.gps_tester_thread.stop()
         event.accept()
 
     def send_sim_data(self):

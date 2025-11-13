@@ -137,7 +137,7 @@ class GpsProcessorThread(QThread):
                     safe_altitude = 0.0
                 else:
                     # Ensure it is a float if it exists
-                    safe_altitude = float(self.__cached_gga.altitude)
+                    safe_altitude = float(self._cached_gga.altitude)
 
                 gps_data_msg = GpsData(
                     timestamp = self._cached_gga.timestamp,
