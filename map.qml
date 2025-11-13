@@ -69,4 +69,7 @@ Item {
             }
         }
     }
+    Component.onCompleted: {
+        console.log("Offline map path:", Qt.resolvedUrl("mapa3_curitiba"))
+    }
 }
