@@ -12,7 +12,7 @@ Item {
         
         PluginParameter { 
             name: "osm.mapping.offline.directory";
-            value: Qt.resolvedUrl("mapa2_curitiba")        
+            value: Qt.resolvedUrl("mapa3_curitiba")
         } 
         
         PluginParameter { 
@@ -33,7 +33,7 @@ Item {
 
         // Center the map on the current position from the Python backend
         center: map_backend.currentPosition
-        zoomLevel: 19 // Initial zoom
+        zoomLevel: 18 // Initial zoom
 
         // --- 1. The Path Polyline ---
         // This draws the recorded path
