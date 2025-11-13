@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
         self.sim_timer.timeout.connect(self.send_sim_data)
 
         # Send first data point immediately to center the map
-        self.send_sim_data()
+        #self.send_sim_data()
         # Start the timer
         self.sim_timer.start()
 
@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
             logging.info("End of simulation data.")
             self.sim_timer.stop()
 
-    @Slot()
+    @Slot(TelemetryMsg)
     def update_ui_with_msg_creator_data(self, data: TelemetryMsg):
 
         #if is riding

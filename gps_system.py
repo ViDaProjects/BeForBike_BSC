@@ -149,6 +149,9 @@ class GpsProcessorThread(QThread):
                     speed = 0, #self._cached_rmc.spd_over_grnd,      # Speed in knots
                     direction = 0) #self._cached_rmc.true_course     # Direction in degrees
 
+                # DEBUG CRÍTICO: Imprima a coordenada de saída ANTES de enviar para a UI
+                logging.info(f"[GPS Processor] Valid DD Coords: {gps_data_msg.latitude}, {gps_data_msg.longitude}")
+
                 #Change this to send ProcessedDataMsg to CreateMsgQueue -------------------------
                 show_data = TelemetryMsg(
                     info = None,
@@ -231,9 +234,10 @@ class MapWidget(QQuickWidget):
             longitude,
             altitude
         )
-
+        logging.error("ENTROU NO UPDATEEEEE")
         if self._current_position != new_coord:
             self._current_position = new_coord
+            logging.warning("EMITIUUU POS: %s, %s, %s", latitude, longitude, altitude)
             self.currentPositionChanged.emit()
 
             if self._is_plotting:
@@ -245,9 +249,13 @@ class MapWidget(QQuickWidget):
     def currentPosition(self):
         return self._current_position
 
+    # CÓDIGO CORRIGIDO (gps_system.py)
     @Property("QVariantList", notify=pathModelChanged)
     def pathModel(self):
-        return self._path_list
+        # AQUI ESTÁ A CORREÇÃO: retorna uma *cópia* da lista.
+        # Isso garante que o QML leia uma nova 'QVariantList' a cada atualização,
+        # resolvendo problemas de binding em alguns ambientes Qt.
+        return list(self._path_list)
 
     @Slot()
     def start_plotting(self):
