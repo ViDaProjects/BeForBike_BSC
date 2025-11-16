@@ -27,6 +27,16 @@ class GpsSentenceType(Enum):
 # ============================================================
 
 @dataclass
+class CrankReading:
+    w: float
+    a: float
+
+@dataclass
+class PowerData:
+    power: float
+    cadence: float # IN RPM, DON'T FORGET, IN RPM
+
+@dataclass
 class GpsSentences:
     type: GpsSentenceType
     data: str
