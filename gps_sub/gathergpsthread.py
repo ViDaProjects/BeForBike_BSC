@@ -7,7 +7,7 @@ import json
 import time
 import logging
 
-DURACAO_COLETA_SEGUNDOS = 1 * 60 
+DURACAO_COLETA_SEGUNDOS = 4 * 60 
 ARQUIVO_SIMULACAO = "gps_data.json"
 
 

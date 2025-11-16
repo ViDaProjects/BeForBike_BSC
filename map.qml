@@ -9,19 +9,19 @@ Item {
     Plugin {
         id: offlineOsm
         name: "osm"
-
-        PluginParameter {
+        
+        PluginParameter { 
             name: "osm.mapping.offline.directory";
             value: Qt.resolvedUrl("mapa3_curitiba")
-        }
-
-        PluginParameter {
+        } 
+        
+        PluginParameter { 
             name: "osm.mapping.offline.enabled";
-            value: true
+            value: true 
         }
         // Adicione esta linha para garantir que o Qt não busque dados de roteamento online, etc.
         PluginParameter { name: "osm.mapping.providersrepository.disabled"; value: true }
-
+        
     }
     // The Map component
     Map {
