@@ -18,9 +18,12 @@ from comm_protocol import TelemetryMsg
 from blinker_module import BlinkerSystem
 from comm_protocol import GpsSentenceType, GpsSentences
 from bluetooth import BleManager
+from crank_parser import CrankParser
+from crank_processor import CrankProcessor
 from createmsg import MsgCreatorThread
 from file_manager import FileManagerThread
 from ride import RideThread
+from ride_state import RideState
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -85,11 +88,12 @@ class MainWindow(QMainWindow):
         map_layout.addWidget(self.map_widget)
 
         #Blinker
-        self.blinker = BlinkerSystem(app_instance)
+        #self.blinker = BlinkerSystem(app_instance)
 
         #variables
         self.has_fix_position: bool = False
         self.its_first_fix = True
+        self.riding: bool = False
 
         #Queues
         self.process_gps_queue = Queue()
@@ -104,11 +108,23 @@ class MainWindow(QMainWindow):
         #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
         self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
-
+        self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.process_crank_data_queue, self.file_manager_queue)
+        from teste.ride.simula_ble import MockBleNanoThread
+        self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json")
         #Start threads
         #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
         #self.gps_tester_thread.start()
+
+        self.bluetooth_thread.start()
+
+        self.shared_ride_state = RideState(app_instance)
+        
+        self.bluetooth_thread.nano_connected.connect(self.shared_ride_state.start_ride)
+        self.bluetooth_thread.nano_disconnected.connect(self.shared_ride_state.stop_ride)
+
+        self.is_riding = False
+        self.shared_ride_state.state_changed.connect(self._on_ride_state_change)
 
         # --- Simulation Logic ---
         self._sim_index = 0
@@ -124,15 +140,19 @@ class MainWindow(QMainWindow):
         self.ui.start_button.clicked.connect(self.map_widget.start_plotting)
         self.ui.stop_button.clicked.connect(self.map_widget.stop_plotting)
 
+        # Connect is riding: 
+        
+
         #Connections
         self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
-        self.blinker.blinkerActivated.connect(self.active_blinker_icon)
-        self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
+        #self.blinker.blinkerActivated.connect(self.active_blinker_icon)
+        #self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
 
     def closeEvent(self, event):
         #self.gps_gather_thread.stop()
         self.gps_processor_thread.stop()
         #self.gps_tester_thread.stop()
+        self.bluetooth_thread.stop()
         event.accept()
 
     def send_sim_data(self):
@@ -159,10 +179,20 @@ class MainWindow(QMainWindow):
             logging.info("End of simulation data.")
             self.sim_timer.stop()
 
+    @Slot(bool)
+    def _on_ride_state_change(self, is_riding: bool):
+        logging.info(f"The riding state has changed, it is now: {is_riding}")
+        self.is_riding = is_riding
+
     @Slot(TelemetryMsg)
     def update_ui_with_msg_creator_data(self, data: TelemetryMsg):
 
         #if is riding
+        # In theory solved elsewhere, self.is_riding is being updated automatically
+
+        # Get start bluetooth with crank signal and get bluetooth with crank failed connection signal
+        
+
         #atualizar labels do crank
         #if Not riding
         #labels with --

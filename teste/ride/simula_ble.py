@@ -3,7 +3,7 @@ import logging
 from queue import Queue, Empty
 from PySide6.QtCore import QThread, Signal, Slot
 
-from fileCreator.comm_protocol import CrankData
+from comm_protocol import CrankData
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -17,6 +17,10 @@ class MockBleNanoThread(QThread):
     nano_connected = Signal()
     nano_disconnected = Signal()
 
+    def start(self):
+        self.is_running = True
+        super().start()
+
     def __init__(self, process_crank_data_queue: Queue, file_path: str, parent=None):
         super().__init__(parent)
         self.process_crank_data_queue = process_crank_data_queue
@@ -28,7 +32,6 @@ class MockBleNanoThread(QThread):
         """
         Lógica principal da simulação.
         """
-        self._is_running = True
         logging.info("[MockNano]: Thread iniciada. Simulando conexão...")
 
         # 1. Carregar os dados do arquivo
@@ -50,9 +53,9 @@ class MockBleNanoThread(QThread):
         logging.info("[MockNano]: Iniciando envio de dados do crank...")
         count = 0
         for json_string in telemetry_strings:
-            if not self._is_running:
-                logging.warning("[MockNano]: Simulação interrompida.")
-                break
+            # if not self._is_running:
+            #     logging.warning("[MockNano]: Simulação interrompida.")
+            #     break
             
             try:
                 # O arquivo Ride44.json contém a TelemetryMsg completa.
