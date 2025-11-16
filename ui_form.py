@@ -46,13 +46,13 @@ class Ui_MainWindow(object):
         self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_11 = QHBoxLayout(self.frame_5)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.label_20 = QLabel(self.frame_5)
-        self.label_20.setObjectName(u"label_20")
-        self.label_20.setMaximumSize(QSize(60, 16777215))
-        self.label_20.setPixmap(QPixmap(u"icons/map-pin.svg"))
-        self.label_20.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.gps_icon_label = QLabel(self.frame_5)
+        self.gps_icon_label.setObjectName(u"gps_icon_label")
+        self.gps_icon_label.setMaximumSize(QSize(60, 16777215))
+        self.gps_icon_label.setPixmap(QPixmap(u"icons/gps_off.svg"))
+        self.gps_icon_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
-        self.horizontalLayout_11.addWidget(self.label_20, 0, Qt.AlignmentFlag.AlignLeft)
+        self.horizontalLayout_11.addWidget(self.gps_icon_label, 0, Qt.AlignmentFlag.AlignLeft)
 
         self.label_26 = QLabel(self.frame_5)
         self.label_26.setObjectName(u"label_26")
@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
         self.app_bt_label.setObjectName(u"app_bt_label")
         self.app_bt_label.setMinimumSize(QSize(50, 0))
         self.app_bt_label.setMaximumSize(QSize(60, 16777215))
-        self.app_bt_label.setPixmap(QPixmap(u"icons/application.png"))
+        self.app_bt_label.setPixmap(QPixmap(u"icons/app_bt_off.png"))
         self.app_bt_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_4.addWidget(self.app_bt_label, 0, Qt.AlignmentFlag.AlignRight)
@@ -158,7 +158,7 @@ class Ui_MainWindow(object):
         self.crank_bt_label = QLabel(self.frame_13)
         self.crank_bt_label.setObjectName(u"crank_bt_label")
         self.crank_bt_label.setMaximumSize(QSize(70, 16777215))
-        self.crank_bt_label.setPixmap(QPixmap(u"icons/bicycle_big.png"))
+        self.crank_bt_label.setPixmap(QPixmap(u"icons/crank_bt_off.png"))
 
         self.horizontalLayout_4.addWidget(self.crank_bt_label, 0, Qt.AlignmentFlag.AlignRight)
 
@@ -482,7 +482,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.label_20.setText("")
+        self.gps_icon_label.setText("")
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"GPS", None))
         self.label_19.setText("")
         self.satellities_label.setText(QCoreApplication.translate("MainWindow", u"05", None))

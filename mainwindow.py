@@ -177,16 +177,18 @@ class MainWindow(QMainWindow):
         #update map
         self.map_widget.update_map_plotting(data.gps.latitude, data.gps.longitude, data.gps.altitude)
 
-        #Update GPS icon
+        #Update GPS icon and write RTC at first fix
         if data.gps.fix_quality > 0 and not self.has_fix_position:
-            #set green icon -------------------------
+            pixmap = QPixmap("icons/gps_on.png")
+            self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = True
             if self.its_first_fix:
                 self.update_rtc_by_gps.emit()
                 self.its_first_fix = False
 
         elif data.gps.fix_quality == 0 and self.has_fix_position:
-            #set gray icon ---------------------------
+            pixmap = QPixmap("icons/gps_off.png")
+            self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = False
 
 
@@ -213,15 +215,30 @@ class MainWindow(QMainWindow):
             self.ui.blinker_label_right.setPixmap(pixmap)
 
     @Slot()
-    def change_app_bt_icon(self, state):
-        pass
+    def change_app_bt_icon(self, app_state):
+        if app_state:
+            pixmap = QPixmap("icons/app_bt_on.png")
+            self.ui.crank_bt_label.setPixmap(pixmap)
+        else:
+            pixmap = QPixmap("icons/app_bt_off.png")
+            self.ui.crank_bt_label.setPixmap(pixmap)
 
     @Slot()
-    def change_crank_bt_icon(self, state):
-        pass
+    def change_crank_bt_icon(self, riding_state):
+        if riding_state:
+            pixmap = QPixmap("icons/crank_bt_on.png")
+            self.ui.crank_bt_label.setPixmap(pixmap)
+        else:
+            pixmap = QPixmap("icons/crank_bt_off.png")
+            self.ui.crank_bt_label.setPixmap(pixmap)
+            self.clear_crank_data_labels()
 
     def clear_crank_data_labels(self):
-        pass
+        self.ui.power_label.setText("N/a") #W
+        self.ui.cadence_label.setText("N/a") #RPM
+        self.ui.speed_label.setText("--") #km/h
+        self.ui.distance_label.setText("--") #m
+        self.ui.calories_label.setText("--") #Kcal
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

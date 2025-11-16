@@ -3,6 +3,7 @@
 
 *.pyproject.user
 mapa3_curitiba/
+mapa_menor/
 
 *~
 *.autosave

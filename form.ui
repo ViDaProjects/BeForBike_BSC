@@ -67,7 +67,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_11">
           <item alignment="Qt::AlignmentFlag::AlignLeft">
-           <widget class="QLabel" name="label_20">
+           <widget class="QLabel" name="gps_icon_label">
             <property name="maximumSize">
              <size>
               <width>60</width>
@@ -78,7 +78,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>icons/map-pin.svg</pixmap>
+             <pixmap>icons/gps_off.svg</pixmap>
             </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -300,7 +300,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>icons/application.png</pixmap>
+             <pixmap>icons/app_bt_off.png</pixmap>
             </property>
             <property name="alignment">
              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -319,7 +319,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>icons/bicycle_big.png</pixmap>
+             <pixmap>icons/crank_bt_off.png</pixmap>
             </property>
            </widget>
           </item>

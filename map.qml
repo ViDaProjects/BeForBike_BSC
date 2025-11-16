@@ -12,7 +12,7 @@ Item {
         
         PluginParameter { 
             name: "osm.mapping.offline.directory";
-            value: Qt.resolvedUrl("mapa3_curitiba")
+            value: Qt.resolvedUrl("mapa_menor")
         } 
         
         PluginParameter { 
