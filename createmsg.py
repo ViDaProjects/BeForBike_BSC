@@ -10,7 +10,7 @@ from pathlib import Path
 # Importe o novo RideState
 from rideState import RideState 
 
-from fileCreator.comm_protocol import (
+from comm_protocol import (
     FileManagerMsg, FileMngMsgId, RideDataMsg, 
     ProcessedDataMsg, TelemetryOrigin, TelemetryMsg
 )

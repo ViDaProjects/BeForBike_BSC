@@ -7,13 +7,13 @@ from queue import Queue
 import logging
 import json
 from pathlib import Path
-from fileCreator.comm_protocol import FileManagerMsg,FileMngMsgId,RideDataMsg
+from comm_protocol import FileManagerMsg,FileMngMsgId,RideDataMsg
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-class FileMannagerThread(QThread):
+class FileManagerThread(QThread):
     id = Signal(int)
     def __init__(self, app,  FileManagerQueue=Queue, SendDataQueue=Queue,parent=None):
         super().__init__(parent)
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     
     FileManagerQueue=Queue()
     SendDataQueue=Queue()
-    ble_controler = FileMannagerThread(app,FileManagerQueue,SendDataQueue)
+    ble_controler = FileManagerThread(app,FileManagerQueue,SendDataQueue)
     # 1. Set the signal handler for SIGINT (Ctrl+C)
     # This allows Ctrl+C to be processed by the Python interpreter
     # while the Qt event loop is running.

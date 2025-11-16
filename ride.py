@@ -7,7 +7,7 @@ from PySide6.QtCore import QThread, Slot, QMutex, QWaitCondition
 # Importe o novo RideState
 from rideState import RideState 
 
-from fileCreator.comm_protocol import (
+from comm_protocol import (
     FileMngMsgId,
     FileManagerMsg,
     RideDataMsg,

@@ -19,7 +19,7 @@ from blinker_module import BlinkerSystem
 from comm_protocol import GpsSentenceType, GpsSentences
 from bluetooth import BleManager
 from createmsg import MsgCreatorThread
-from file_mannager import FileManagerThread
+from file_manager import FileManagerThread
 from ride import RideThread
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
