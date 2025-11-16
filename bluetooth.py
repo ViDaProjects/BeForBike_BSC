@@ -12,6 +12,10 @@ from comm_protocol import FileManagerMsg, FileMngMsgId, RideDataMsg, CrankReadin
 import gzip
 
 
+FIXED_PERIPHERAL_MAC = "01:23:45:67:90:E7"
+COMPANY_ID = 0xF0F0
+SECRET_KEY = b"Oficinas3"
+
 # --- Constantes de UUIDs Usadas por esta Biblioteca ---
 # CHARACTERISTIC_UUID_TX = "0000ffe1-0000-1000-8000-00805f9b34fb"
 CHARACTERISTIC_UUID_TX = "12345678-1234-5678-1234-56789abcdef0"
@@ -27,14 +31,17 @@ class BleManager(QThread):
     device_disconnected = Signal(str)
     device_connection_failed = Signal(str)
 
-    def __init__(self, fixed_mac, company_id, secret_key, sendRideDataQueue: Queue, ProcessCrankDataQueue: Queue, FileManagerQueue: Queue, parent=None):
+    crank_connection_status = Signal(bool)
+
+    def __init__(self, sendRideDataQueue: Queue, ProcessCrankDataQueue: Queue, FileManagerQueue: Queue, parent=None):
         # 2. Construtor do QThread é chamado
         super().__init__(parent)
         
         self.ble_buffers = {}
-        self.fixed_mac = fixed_mac
-        self.company_id = company_id
-        self.secret_key = secret_key
+
+        self.fixed_mac = FIXED_PERIPHERAL_MAC
+        self.company_id = COMPANY_ID
+        self.secret_key = SECRET_KEY
         # dicionario para mapear endereços MAC para clientes BleakClient
         self.clients = {}
         # Set para rastrear dispositivos gerenciados(são removidos apenas quando falharem em reconectar)
