@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 # Importe o novo RideState
-from rideState import RideState 
+from ride_state import RideState 
 
 from comm_protocol import (
     FileManagerMsg, FileMngMsgId, RideDataMsg, 

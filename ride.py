@@ -5,7 +5,7 @@ from queue import Queue, Empty
 from PySide6.QtCore import QThread, Slot, QMutex, QWaitCondition
 
 # Importe o novo RideState
-from rideState import RideState 
+from ride_state import RideState 
 
 from comm_protocol import (
     FileMngMsgId,

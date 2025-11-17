@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'form.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.10.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -485,10 +485,10 @@ class Ui_MainWindow(object):
         self.gps_icon_label.setText("")
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"GPS", None))
         self.label_19.setText("")
-        self.satellities_label.setText(QCoreApplication.translate("MainWindow", u"05", None))
+        self.satellities_label.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.label_23.setText("")
         self.label_25.setText(QCoreApplication.translate("MainWindow", u"Fix quality:", None))
-        self.fix_quality_label.setText(QCoreApplication.translate("MainWindow", u"1", None))
+        self.fix_quality_label.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.date_label.setText(QCoreApplication.translate("MainWindow", u"16 out", None))
         self.time_label.setText(QCoreApplication.translate("MainWindow", u"13:05", None))
         self.label_28.setText(QCoreApplication.translate("MainWindow", u"Bluetooth conn", None))

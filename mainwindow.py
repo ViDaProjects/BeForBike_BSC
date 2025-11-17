@@ -15,7 +15,7 @@ from ui_form import Ui_MainWindow
 #from gps_map import MapWidget
 from gps_system import GpsGatherThread, GpsProcessorThread, TestGpsThread, MapWidget
 from comm_protocol import TelemetryMsg
-from blinker_module import BlinkerSystem
+#from blinker_module import BlinkerSystem
 from comm_protocol import GpsSentenceType, GpsSentences
 from bluetooth import BleManager
 from crank_parser import CrankParser
@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
         #variables
         self.has_fix_position: bool = False
         self.its_first_fix = True
-        self.riding: bool = False
+        self.is_riding: bool = False
 
         #Queues
         self.process_gps_queue = Queue()
@@ -110,7 +110,10 @@ class MainWindow(QMainWindow):
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
         self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.process_crank_data_queue, self.file_manager_queue)
         from teste.ride.simula_ble import MockBleNanoThread
-        self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json")
+        #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
+        ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
+        self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, ride_path)
+        
         #Start threads
         #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
@@ -119,12 +122,6 @@ class MainWindow(QMainWindow):
         self.bluetooth_thread.start()
 
         self.shared_ride_state = RideState(app_instance)
-        
-        self.bluetooth_thread.nano_connected.connect(self.shared_ride_state.start_ride)
-        self.bluetooth_thread.nano_disconnected.connect(self.shared_ride_state.stop_ride)
-
-        self.is_riding = False
-        self.shared_ride_state.state_changed.connect(self._on_ride_state_change)
 
         # --- Simulation Logic ---
         self._sim_index = 0
@@ -141,7 +138,10 @@ class MainWindow(QMainWindow):
         self.ui.stop_button.clicked.connect(self.map_widget.stop_plotting)
 
         # Connect is riding: 
-        
+        self.bluetooth_thread.nano_connected.connect(self.shared_ride_state.start_ride)
+        self.bluetooth_thread.nano_disconnected.connect(self.shared_ride_state.stop_ride)
+        self.shared_ride_state.state_changed.connect(self.change_crank_bt_icon)
+        self.shared_ride_state.state_changed.connect(self._on_ride_state_change)        
 
         #Connections
         self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
@@ -209,7 +209,7 @@ class MainWindow(QMainWindow):
 
         #Update GPS icon and write RTC at first fix
         if data.gps.fix_quality > 0 and not self.has_fix_position:
-            pixmap = QPixmap("icons/gps_on.png")
+            pixmap = QPixmap("icons/gps_on.svg")
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = True
             if self.its_first_fix:
@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
                 self.its_first_fix = False
 
         elif data.gps.fix_quality == 0 and self.has_fix_position:
-            pixmap = QPixmap("icons/gps_off.png")
+            pixmap = QPixmap("icons/gps_off.svg")
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = False
 
