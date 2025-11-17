@@ -1,4 +1,5 @@
 from PySide6.QtCore import QObject, QMutex, Slot, Signal
+import logging # Importar logging é uma boa prática para debug
 
 class RideState(QObject):
     """
@@ -6,7 +7,7 @@ class RideState(QObject):
     Ela é thread-safe.
     """
     
-    # Sinal opcional para a UI, se necessário
+    # Sinal que emite o novo estado (True/False)
     state_changed = Signal(bool)
 
     def __init__(self, parent=None):
@@ -14,23 +15,28 @@ class RideState(QObject):
         self._is_riding = False
         self._mutex = QMutex()
 
+    @Slot(bool) # O Slot agora espera um booleano
+    def set_ride_status(self, is_riding: bool):
+        """
+        Define o estado da corrida (True para INICIAR, False para PARAR).
+        """
+        self._mutex.lock()
+        # Verifica se o estado realmente mudou para evitar emissões desnecessárias
+        if self._is_riding != is_riding:
+            self._is_riding = is_riding
+            status = "INICIADA" if is_riding else "PARADA"
+            # logging.info(f"[RideState]: Corrida {status}")
+            self.state_changed.emit(is_riding)
+        self._mutex.unlock()
+
+    # Métodos de conveniência (opcional, mas bom para clareza)
     @Slot()
     def start_ride(self):
-        """Inicia a corrida."""
-        self._mutex.lock()
-        self._is_riding = True
-        self._mutex.unlock()
-        self.state_changed.emit(True)
-        # logging.info("[RideState]: Corrida INICIADA")
+        self.set_ride_status(True)
 
     @Slot()
     def stop_ride(self):
-        """Para a corrida."""
-        self._mutex.lock()
-        self._is_riding = False
-        self._mutex.unlock()
-        self.state_changed.emit(False)
-        # logging.info("[RideState]: Corrida PARADA")
+        self.set_ride_status(False)
 
     def is_riding(self) -> bool:
         """Verifica o estado da corrida de forma thread-safe."""

@@ -14,8 +14,7 @@ class MockBleNanoThread(QThread):
     """
     
     # Sinais para controlar a RideThread
-    nano_connected = Signal()
-    nano_disconnected = Signal()
+    crank_connection_status = Signal(bool)
 
     def start(self):
         self.is_running = True
@@ -47,7 +46,7 @@ class MockBleNanoThread(QThread):
         # 2. Simular conexão e emitir sinal de START
         self.msleep(1000)
         logging.info("[MockNano]: Conectado! Emitindo 'nano_connected' (para iniciar a RideThread).")
-        self.nano_connected.emit()
+        self.crank_connection_status.emit(True)
 
         # 3. Enviar dados de tempos em tempos
         logging.info("[MockNano]: Iniciando envio de dados do crank...")
@@ -81,7 +80,7 @@ class MockBleNanoThread(QThread):
         logging.info(f"[MockNano]: Simulação concluída. Enviou {count} pacotes.")
         self.msleep(1000)
         logging.info("[MockNano]: Desconectando... Emitindo 'nano_disconnected' (para parar a RideThread).")
-        self.nano_disconnected.emit()
+        self.crank_connection_status.emit(False)
         
         self._is_running = False
         logging.info("[MockNano]: Thread finalizada.")

@@ -138,8 +138,8 @@ class MainWindow(QMainWindow):
         self.ui.stop_button.clicked.connect(self.map_widget.stop_plotting)
 
         # Connect is riding: 
-        self.bluetooth_thread.nano_connected.connect(self.shared_ride_state.start_ride)
-        self.bluetooth_thread.nano_disconnected.connect(self.shared_ride_state.stop_ride)
+# Conexão na sua Classe Controladora Principal
+        self.bluetooth_thread.crank_connection_status.connect(self.shared_ride_state.set_ride_status)
         self.shared_ride_state.state_changed.connect(self.change_crank_bt_icon)
         self.shared_ride_state.state_changed.connect(self._on_ride_state_change)        
 

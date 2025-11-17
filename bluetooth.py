@@ -23,15 +23,17 @@ UART_SERVICE_UUID_RX = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
 # 1. A classe agora herda de QThread
 class BleManager(QThread):
-    notification_data = Signal(str, dict)
-    device_connected_nano = Signal(str)
-    device_connected_tel = Signal(str)
-
-    ask_data_transfer = Signal(str)
-    device_disconnected = Signal(str)
+    
+    #device_connected_nano = Signal(str)
+    #device_connected_tel = Signal(str)
+    #device_desconnected_nano = Signal(str)
+    #device_desconnected_tel = Signal(str)
+    
     device_connection_failed = Signal(str)
 
     crank_connection_status = Signal(bool)
+    app_connection_status = Signal(bool)
+
 
     def __init__(self, sendRideDataQueue: Queue, ProcessCrankDataQueue: Queue, FileManagerQueue: Queue, parent=None):
         # 2. Construtor do QThread é chamado
@@ -209,14 +211,18 @@ class BleManager(QThread):
                 self.clients[address] = client
                 self.managed_devices.add(address)
                 if address == self.fixed_mac:
-                    self.device_connected_nano.emit(address)
+                    #self.device_connected_nano.emit(address)
+                    self.crank_connection_status.emit(True)
+
                     await client.start_notify(
                         UART_SERVICE_UUID_RX,
                         lambda s, d: self._notification_handler(s, d, address)
                     )
                 else:
                     logging.info(f"Dispositivo móvel {address} conectado.")
-                    self.device_connected_tel.emit(address)
+                    #self.device_connected_tel.emit(address)
+                    self.app_connection_status.emit(True)
+
                     self.mobile_client_address = address
                     self.send_data() 
                 while client.is_connected and self.is_running:
@@ -243,7 +249,13 @@ class BleManager(QThread):
         if address in self.managed_devices:
             self.managed_devices.remove(address)
         if retry_count >= MAX_RETRIES:
-            self.device_disconnected.emit(address)
+            if address == self.fixed_mac:
+                self.crank_connection_status.emit(False)
+                #self.device_desconnected_nano.emit(address) 
+            else:
+                self.app_connection_status.emit(False)
+                #self.device_desconnected_tel.emit(address)
+
 
     async def _periodic_scanner_task(self):
         """Scanner periódico que procura por novos dispositivos."""
