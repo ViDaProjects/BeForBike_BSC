@@ -3,9 +3,10 @@
         "mainwindow.py",
         "form.ui",
         "ui_form.py",
-        "icons/arrow-left (1).svg",
-        "icons/arrow-right (6).svg",
-        "icons/arrow-right (7).svg",
+        "icons/arrow_left_on.svg",
+        "icons/arrow_left_off.svg",
+        "icons/arrow_right_on.svg",
+        "icons/arrow_right_off.svg",
         "icons/bike (2).png",
         "icons/map_example.jpg",
         "icons/map-pin.svg",
@@ -13,8 +14,10 @@
         "icons/smartphone (3).svg",
         ".gitignore",
         "comm_protocol.py",
-        "comm_protocol_example.py",
-        "gps_map.py",
-        "map.qml"
+        "map.qml",
+        "gps_system.py",
+        "not_used/utils.py",
+        "blinker_module.py",
+        "not_used/main_test.py"
     ]
 }

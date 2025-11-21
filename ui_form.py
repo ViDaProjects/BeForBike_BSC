@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QPushButton, QSizePolicy, QStatusBar,
-    QVBoxLayout, QWidget)
+    QMainWindow, QSizePolicy, QStatusBar, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -46,13 +46,13 @@ class Ui_MainWindow(object):
         self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_11 = QHBoxLayout(self.frame_5)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.label_20 = QLabel(self.frame_5)
-        self.label_20.setObjectName(u"label_20")
-        self.label_20.setMaximumSize(QSize(60, 16777215))
-        self.label_20.setPixmap(QPixmap(u"icons/map-pin.svg"))
-        self.label_20.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.gps_icon_label = QLabel(self.frame_5)
+        self.gps_icon_label.setObjectName(u"gps_icon_label")
+        self.gps_icon_label.setMaximumSize(QSize(60, 16777215))
+        self.gps_icon_label.setPixmap(QPixmap(u"icons/gps_off.svg"))
+        self.gps_icon_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
-        self.horizontalLayout_11.addWidget(self.label_20, 0, Qt.AlignmentFlag.AlignLeft)
+        self.horizontalLayout_11.addWidget(self.gps_icon_label, 0, Qt.AlignmentFlag.AlignLeft)
 
         self.label_26 = QLabel(self.frame_5)
         self.label_26.setObjectName(u"label_26")
@@ -73,13 +73,13 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_11.addWidget(self.label_19, 0, Qt.AlignmentFlag.AlignLeft)
 
-        self.satelites_label = QLabel(self.frame_5)
-        self.satelites_label.setObjectName(u"satelites_label")
-        self.satelites_label.setMinimumSize(QSize(20, 0))
-        self.satelites_label.setMaximumSize(QSize(20, 16777215))
-        self.satelites_label.setFont(font1)
+        self.satellities_label = QLabel(self.frame_5)
+        self.satellities_label.setObjectName(u"satellities_label")
+        self.satellities_label.setMinimumSize(QSize(20, 0))
+        self.satellities_label.setMaximumSize(QSize(20, 16777215))
+        self.satellities_label.setFont(font1)
 
-        self.horizontalLayout_11.addWidget(self.satelites_label)
+        self.horizontalLayout_11.addWidget(self.satellities_label)
 
         self.label_23 = QLabel(self.frame_5)
         self.label_23.setObjectName(u"label_23")
@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
         self.app_bt_label.setObjectName(u"app_bt_label")
         self.app_bt_label.setMinimumSize(QSize(50, 0))
         self.app_bt_label.setMaximumSize(QSize(60, 16777215))
-        self.app_bt_label.setPixmap(QPixmap(u"icons/application.png"))
+        self.app_bt_label.setPixmap(QPixmap(u"icons/app_bt_off.png"))
         self.app_bt_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_4.addWidget(self.app_bt_label, 0, Qt.AlignmentFlag.AlignRight)
@@ -158,7 +158,7 @@ class Ui_MainWindow(object):
         self.crank_bt_label = QLabel(self.frame_13)
         self.crank_bt_label.setObjectName(u"crank_bt_label")
         self.crank_bt_label.setMaximumSize(QSize(70, 16777215))
-        self.crank_bt_label.setPixmap(QPixmap(u"icons/bicycle_big.png"))
+        self.crank_bt_label.setPixmap(QPixmap(u"icons/crank_bt_off.png"))
 
         self.horizontalLayout_4.addWidget(self.crank_bt_label, 0, Qt.AlignmentFlag.AlignRight)
 
@@ -395,7 +395,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.blinker_label_left = QLabel(self.blinker_frame_left)
         self.blinker_label_left.setObjectName(u"blinker_label_left")
-        self.blinker_label_left.setPixmap(QPixmap(u"icons/arrow-left (1).svg"))
+        self.blinker_label_left.setPixmap(QPixmap(u"icons/arrow_left_off.svg"))
         self.blinker_label_left.setScaledContents(False)
         self.blinker_label_left.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.blinker_label_left.setWordWrap(False)
@@ -416,7 +416,7 @@ class Ui_MainWindow(object):
         self.blinker_label_right = QLabel(self.blinker_frame_right)
         self.blinker_label_right.setObjectName(u"blinker_label_right")
         self.blinker_label_right.setLineWidth(4)
-        self.blinker_label_right.setPixmap(QPixmap(u"icons/arrow-right (7).svg"))
+        self.blinker_label_right.setPixmap(QPixmap(u"icons/arrow_right_off.svg"))
 
         self.verticalLayout_6.addWidget(self.blinker_label_right)
 
@@ -445,24 +445,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QVBoxLayout(self.map_frame_original)
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(25, 30, 25, 0)
+        self.verticalLayout_4.setContentsMargins(15, 0, 15, 0)
         self.map_frame = QFrame(self.map_frame_original)
         self.map_frame.setObjectName(u"map_frame")
-        self.map_frame.setMaximumSize(QSize(16777215, 350))
-        self.map_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.map_frame.setMaximumSize(QSize(16777215, 440))
+        self.map_frame.setFrameShape(QFrame.Shape.NoFrame)
         self.map_frame.setFrameShadow(QFrame.Shadow.Raised)
 
         self.verticalLayout_4.addWidget(self.map_frame)
-
-        self.start_button = QPushButton(self.map_frame_original)
-        self.start_button.setObjectName(u"start_button")
-
-        self.verticalLayout_4.addWidget(self.start_button)
-
-        self.stop_button = QPushButton(self.map_frame_original)
-        self.stop_button.setObjectName(u"stop_button")
-
-        self.verticalLayout_4.addWidget(self.stop_button)
 
 
         self.horizontalLayout.addWidget(self.map_frame_original)
@@ -482,13 +472,13 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.label_20.setText("")
+        self.gps_icon_label.setText("")
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"GPS", None))
         self.label_19.setText("")
-        self.satelites_label.setText(QCoreApplication.translate("MainWindow", u"05", None))
+        self.satellities_label.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.label_23.setText("")
         self.label_25.setText(QCoreApplication.translate("MainWindow", u"Fix quality:", None))
-        self.fix_quality_label.setText(QCoreApplication.translate("MainWindow", u"1", None))
+        self.fix_quality_label.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.date_label.setText(QCoreApplication.translate("MainWindow", u"16 out", None))
         self.time_label.setText(QCoreApplication.translate("MainWindow", u"13:05", None))
         self.label_28.setText(QCoreApplication.translate("MainWindow", u"Bluetooth conn", None))
@@ -509,7 +499,5 @@ class Ui_MainWindow(object):
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Blinker:", None))
         self.blinker_label_left.setText("")
         self.blinker_label_right.setText("")
-        self.start_button.setText(QCoreApplication.translate("MainWindow", u"Start plotting", None))
-        self.stop_button.setText(QCoreApplication.translate("MainWindow", u"Stop plotting", None))
     # retranslateUi
 

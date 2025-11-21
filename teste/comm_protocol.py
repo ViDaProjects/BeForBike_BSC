@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 from enum import Enum, auto
 from typing import Union, Dict
 
@@ -11,35 +11,16 @@ class FileMngMsgId(Enum):
     CREATE_FILE = auto()
     DELETE_FILE = auto()
     SEARCH_FILES = auto()
-    GET_RIDE_ID = auto()
 
 class TelemetryOrigin(Enum):
     """ Indicates the origin of telemetry data. """
     GPS = auto()
     CRANK = auto()
 
-class GpsSentenceType(Enum):
-    GGA = auto()
-    RMC = auto()
 
 # ============================================================
 #  BASIC DATA STRUCTURES
 # ============================================================
-
-@dataclass
-class CrankReading:
-    w: float
-    a: float
-
-@dataclass
-class PowerData:
-    power: float
-    cadence: float # IN RPM, DON'T FORGET, IN RPM
-
-@dataclass
-class GpsSentences:
-    type: GpsSentenceType
-    data: str
 
 @dataclass
 class GpsData:
@@ -79,8 +60,17 @@ class CrankData:
         return CrankData(**data)
 
 @dataclass
+class CrankReading:
+    w: float
+    a: float
+
+@dataclass
+class PowerData:
+    power: float
+    cadence: float
+
+@dataclass
 class PacketInfo:
-    ride_id: int
     date: str
     time: str
 
@@ -107,7 +97,6 @@ class ProcessedDataMsg:
     """
     data_origin: TelemetryOrigin
     data: Union[GpsData, CrankData]
-    info: PacketInfo = None
 
 ## Threads: MsgCreator and RideThread
 @dataclass
@@ -115,7 +104,7 @@ class TelemetryMsg:
     """ Message containing a snapshot of sensor and GPS telemetry data.
     Goes to: AddRideDataQueue
     Sender: MsgCreatorThread
-    Receiver: RideThread, MainWindowThread
+    Receiver: RideThread
     """
     info: PacketInfo
     gps: GpsData
@@ -157,9 +146,8 @@ class FileManagerMsg:
     """
     msg_id: FileMngMsgId
     file_name: str = None
-    telemetry_list: list[str] = field(default_factory=list) #list of json String which represents TelemetryData.to_dict()
+    telemetry_list: list[str] = None
 
     #create_file: filename and list[TelemetryMsg]
     #delete_file: filename
     #search_files: None
-    #get_ride_id: None

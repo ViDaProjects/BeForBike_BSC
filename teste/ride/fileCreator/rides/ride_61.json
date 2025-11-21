@@ -1,0 +1,3 @@
+[
+    "{\"info\": {\"ride_id\": 61, \"date\": \"2025-11-11\", \"time\": \"22:00:01\"}, \"gps\": {\"timestamp\": \"2025-11-11T22:00:01Z\", \"latitude\": -25.4, \"longitude\": -49.2, \"altitude\": 900, \"speed\": 25, \"direction\": 120, \"fix_satellites\": 8, \"fix_quality\": 1}, \"crank\": {\"power\": 181.1, \"cadence\": 68.8, \"joules\": 32707.0, \"calories\": 463.0, \"speed_ms\": 4.638888888888888, \"speed\": 16.7, \"distance\": 25.28}}"
+]
