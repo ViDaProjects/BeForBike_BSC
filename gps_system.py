@@ -234,10 +234,10 @@ class MapWidget(QQuickWidget):
             longitude,
             altitude
         )
-        logging.error("ENTROU NO UPDATEEEEE")
+
         if self._current_position != new_coord:
             self._current_position = new_coord
-            logging.warning("EMITIUUU POS: %s, %s, %s", latitude, longitude, altitude)
+            logging.info("[Map Widget] Current position on map changed to: %s, %s, %s", latitude, longitude, altitude)
             self.currentPositionChanged.emit()
 
             if self._is_plotting:
@@ -249,7 +249,6 @@ class MapWidget(QQuickWidget):
     def currentPosition(self):
         return self._current_position
 
-    # CÓDIGO CORRIGIDO (gps_system.py)
     @Property("QVariantList", notify=pathModelChanged)
     def pathModel(self):
         # AQUI ESTÁ A CORREÇÃO: retorna uma *cópia* da lista.
@@ -258,15 +257,22 @@ class MapWidget(QQuickWidget):
         return list(self._path_list)
 
     @Slot()
+    def change_plotting_state(self, riding_state: bool):
+        if riding_state and not self._is_plotting:
+            self.start_plotting()
+        elif not riding_state and self._is_plotting:
+            self.stop_plotting()
+        else:
+            logging.warning("[Map Widget] Received plotting state is the same as current state; no action taken.")
+    
     def start_plotting(self):
-        print("Starting path plotting...")
+        logging.info("[Map Widget] Starting path plotting...")
         self._is_plotting = True
         self._path_list = []
         if self._current_position.isValid():
             self._path_list.append(self._current_position)
         self.pathModelChanged.emit()
 
-    @Slot()
     def stop_plotting(self):
-        print("Stopping path plotting.")
+        logging.info("[Map Widget] Stopping path plotting.")
         self._is_plotting = False

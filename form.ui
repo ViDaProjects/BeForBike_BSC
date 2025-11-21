@@ -894,13 +894,13 @@
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>25</number>
+           <number>15</number>
           </property>
           <property name="topMargin">
-           <number>30</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>25</number>
+           <number>15</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -910,28 +910,14 @@
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>350</height>
+              <height>440</height>
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::Shape::StyledPanel</enum>
+             <enum>QFrame::Shape::NoFrame</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Shadow::Raised</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="start_button">
-            <property name="text">
-             <string>Start plotting</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="stop_button">
-            <property name="text">
-             <string>Stop plotting</string>
             </property>
            </widget>
           </item>

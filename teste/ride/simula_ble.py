@@ -15,6 +15,7 @@ class MockBleNanoThread(QThread):
     
     # Sinais para controlar a RideThread
     crank_connection_status = Signal(bool)
+    app_connection_status = Signal(bool)
 
     def start(self):
         self.is_running = True
@@ -44,13 +45,14 @@ class MockBleNanoThread(QThread):
             return
 
         # 2. Simular conexão e emitir sinal de START
-        self.msleep(1000)
-        logging.info("[MockNano]: Conectado! Emitindo 'nano_connected' (para iniciar a RideThread).")
+        self.msleep(2000)
+        logging.info("[MockNano]: Conectado! Emitindo 'crank_connection_status(True)' (para iniciar a RideThread).")
         self.crank_connection_status.emit(True)
 
         # 3. Enviar dados de tempos em tempos
         logging.info("[MockNano]: Iniciando envio de dados do crank...")
         count = 0
+        self.msleep(3000)
         for json_string in telemetry_strings:
             # if not self._is_running:
             #     logging.warning("[MockNano]: Simulação interrompida.")
@@ -71,7 +73,7 @@ class MockBleNanoThread(QThread):
                     logging.info("[MockNano]: Pacote sem dados de crank, pulando.")
 
                 # Simula um intervalo de 200ms entre pacotes
-                self.msleep(200)
+                self.msleep(1500)
 
             except Exception as e:
                 logging.error(f"[MockNano]: Erro ao processar item: {e}")

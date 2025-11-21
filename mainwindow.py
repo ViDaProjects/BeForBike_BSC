@@ -32,46 +32,50 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # A longer simulated path with 20 data points (GGA + RMC)
 # This path continues the South-East movement from your original data.
 SIM_NMEA_DATA = [
-"$GNRMC,001353.000,A,2546.17898,S,4916.12660,W,0.490,47.25,130625,,,A,V*38",
-"$GNGGA,001353.000,2546.17898,S,4916.12660,W,1,12,0.72,891.0,M,20.8,M,,0000*46",
-"$GNRMC,001354.000,A,2546.17897,S,4916.12661,W,0.430,51.49,130625,,,A,V*36",
-"$GNGGA,001354.000,2546.17897,S,4916.12661,W,1,12,0.72,890.8,M,20.8,M,,0000*46",
-"$GNRMC,001355.000,A,2546.17897,S,4916.12667,W,0.350,53.45,130625,,,A,V*3E",
-"$GNGGA,001355.000,2546.17897,S,4916.12667,W,1,12,0.72,890.4,M,20.8,M,,0000*4D",
-"$GNRMC,001356.000,A,2546.17900,S,4916.12679,W,0.390,58.59,130625,,,A,V*37",
-"$GNGGA,001356.000,2546.17900,S,4916.12679,W,1,12,0.72,890.0,M,20.8,M,,0000*4A",
-"$GNRMC,001357.000,A,2546.17899,S,4916.12694,W,0.430,62.85,130625,,,A,V*31",
-"$GNGGA,001357.000,2546.17899,S,4916.12694,W,1,12,0.72,889.4,M,20.8,M,,0000*45",
-"$GNRMC,001358.000,A,2546.17898,S,4916.12708,W,0.420,66.27,130625,,,A,V*36",
-"$GNGGA,001358.000,2546.17898,S,4916.12708,W,1,12,0.72,889.0,M,20.8,M,,0000*4B",
-"$GNRMC,001359.000,A,2546.17898,S,4916.12725,W,0.450,70.73,130625,,,A,V*39",
-"$GNGGA,001359.000,2546.17898,S,4916.12725,W,1,12,0.72,888.5,M,20.8,M,,0000*41",
-"$GNRMC,001400.000,A,2546.17900,S,4916.12742,W,0.540,75.44,130625,,,A,V*32",
-"$GNGGA,001400.000,2546.17900,S,4916.12742,W,1,12,0.72,887.9,M,20.8,M,,0000*48",
-"$GNRMC,001401.000,A,2546.17900,S,4916.12763,W,0.690,79.89,130625,,,A,V*33",
-"$GNGGA,001401.000,2546.17900,S,4916.12763,W,1,12,0.72,887.1,M,20.8,M,,0000*42",
-"$GNRMC,001402.000,A,2546.17900,S,4916.12791,W,1.070,84.72,130625,,,A,V*32",
-"$GNGGA,001402.000,2546.17900,S,4916.12791,W,1,12,0.72,886.2,M,20.8,M,,0000*4E",
-"$GNRMC,001353.000,A,2546.17898,S,4916.12660,W,0.490,47.25,130625,,,A,V*38",
-"$GNGGA,001353.000,2546.17898,S,4916.12660,W,1,12,0.72,891.0,M,20.8,M,,0000*46",
-"$GNRMC,001354.000,A,2546.17897,S,4916.12661,W,0.430,51.49,130625,,,A,V*36",
-"$GNGGA,001354.000,2546.17897,S,4916.12661,W,1,12,0.72,890.8,M,20.8,M,,0000*46",
-"$GNRMC,001355.000,A,2546.17897,S,4916.12667,W,0.350,53.45,130625,,,A,V*3E",
-"$GNGGA,001355.000,2546.17897,S,4916.12667,W,1,12,0.72,890.4,M,20.8,M,,0000*4D",
-"$GNRMC,001356.000,A,2546.17900,S,4916.12679,W,0.390,58.59,130625,,,A,V*37",
-"$GNGGA,001356.000,2546.17900,S,4916.12679,W,1,12,0.72,890.0,M,20.8,M,,0000*4A",
-"$GNRMC,001357.000,A,2546.17899,S,4916.12694,W,0.430,62.85,130625,,,A,V*31",
-"$GNGGA,001357.000,2546.17899,S,4916.12694,W,1,12,0.72,889.4,M,20.8,M,,0000*45",
-"$GNRMC,001358.000,A,2546.17898,S,4916.12708,W,0.420,66.27,130625,,,A,V*36",
-"$GNGGA,001358.000,2546.17898,S,4916.12708,W,1,12,0.72,889.0,M,20.8,M,,0000*4B",
-"$GNRMC,001359.000,A,2546.17898,S,4916.12725,W,0.450,70.73,130625,,,A,V*39",
-"$GNGGA,001359.000,2546.17898,S,4916.12725,W,1,12,0.72,888.5,M,20.8,M,,0000*41",
-"$GNRMC,001400.000,A,2546.17900,S,4916.12742,W,0.540,75.44,130625,,,A,V*32",
-"$GNGGA,001400.000,2546.17900,S,4916.12742,W,1,12,0.72,887.9,M,20.8,M,,0000*48",
-"$GNRMC,001401.000,A,2546.17900,S,4916.12763,W,0.690,79.89,130625,,,A,V*33",
-"$GNGGA,001401.000,2546.17900,S,4916.12763,W,1,12,0.72,887.1,M,20.8,M,,0000*42",
-"$GNRMC,001402.000,A,2546.17900,S,4916.12791,W,1.070,84.72,130625,,,A,V*32",
-"$GNGGA,001402.000,2546.17900,S,4916.12791,W,1,12,0.72,886.2,M,20.8,M,,0000*4E"
+  "$GNRMC,130252.00,A,2526.16833,S,04916.13352,W,1.450,,191125,,,A*69",
+  "$GNGGA,130252.00,2526.16833,S,04916.13352,W,1,08,2.64,970.6,M,-2.5,M,,*50",
+  "$GNRMC,130253.00,A,2526.16783,S,04916.13351,W,1.608,,191125,,,A*60",
+  "$GNGGA,130253.00,2526.16783,S,04916.13351,W,1,08,2.64,970.5,M,-2.5,M,,*55",
+  "$GNRMC,130254.00,A,2526.16728,S,04916.13374,W,1.723,,191125,,,A*69",
+  "$GNGGA,130254.00,2526.16728,S,04916.13374,W,1,08,2.64,970.4,M,-2.5,M,,*55",
+  "$GNRMC,130255.00,A,2526.16893,S,04916.13381,W,0.965,,191125,,,A*60",
+  "$GNGGA,130255.00,2526.16893,S,04916.13381,W,1,08,1.07,970.3,M,-2.5,M,,*50",
+  "$GNRMC,130256.00,A,2526.16843,S,04916.13374,W,1.126,,191125,,,A*6A",
+  "$GNGGA,130256.00,2526.16843,S,04916.13374,W,1,08,1.07,970.2,M,-2.5,M,,*55",
+  "$GNRMC,130257.00,A,2526.16838,S,04916.13372,W,0.977,,191125,,,A*6C",
+  "$GNGGA,130257.00,2526.16838,S,04916.13372,W,1,08,1.07,970.1,M,-2.5,M,,*5D",
+  "$GNRMC,130258.00,A,2526.17070,S,04916.13469,W,0.308,,191125,,,A*69",
+  "$GNGGA,130258.00,2526.17070,S,04916.13469,W,1,09,1.03,969.2,M,-2.5,M,,*54",
+  "$GNRMC,130259.00,A,2526.17015,S,04916.13471,W,0.637,,191125,,,A*6B",
+  "$GNGGA,130259.00,2526.17015,S,04916.13471,W,1,09,1.03,969.1,M,-2.5,M,,*5C",
+  "$GNRMC,130300.00,A,2526.16962,S,04916.13469,W,0.869,,191125,,,A*62",
+  "$GNGGA,130300.00,2526.16962,S,04916.13469,W,1,09,1.03,969.1,M,-2.5,M,,*50",
+  "$GNRMC,130301.00,A,2526.16814,S,04916.13442,W,0.721,,191125,,,A*69",
+  "$GNGGA,130301.00,2526.16814,S,04916.13442,W,1,04,2.24,968.6,M,-2.5,M,,*55",
+  "$GNRMC,130302.00,A,2526.16781,S,04916.13429,W,0.805,,191125,,,A*6D",
+  "$GNGGA,130302.00,2526.16781,S,04916.13429,W,1,04,2.24,968.5,M,-2.5,M,,*5B",
+  "$GNRMC,130252.00,A,2526.16833,S,04916.13352,W,1.450,,191125,,,A*69",
+  "$GNGGA,130252.00,2526.16833,S,04916.13352,W,1,08,2.64,970.6,M,-2.5,M,,*50",
+  "$GNRMC,130253.00,A,2526.16783,S,04916.13351,W,1.608,,191125,,,A*60",
+  "$GNGGA,130253.00,2526.16783,S,04916.13351,W,1,08,2.64,970.5,M,-2.5,M,,*55",
+  "$GNRMC,130254.00,A,2526.16728,S,04916.13374,W,1.723,,191125,,,A*69",
+  "$GNGGA,130254.00,2526.16728,S,04916.13374,W,1,08,2.64,970.4,M,-2.5,M,,*55",
+  "$GNRMC,130255.00,A,2526.16893,S,04916.13381,W,0.965,,191125,,,A*60",
+  "$GNGGA,130255.00,2526.16893,S,04916.13381,W,1,08,1.07,970.3,M,-2.5,M,,*50",
+  "$GNRMC,130256.00,A,2526.16843,S,04916.13374,W,1.126,,191125,,,A*6A",
+  "$GNGGA,130256.00,2526.16843,S,04916.13374,W,1,08,1.07,970.2,M,-2.5,M,,*55",
+  "$GNRMC,130257.00,A,2526.16838,S,04916.13372,W,0.977,,191125,,,A*6C",
+  "$GNGGA,130257.00,2526.16838,S,04916.13372,W,1,08,1.07,970.1,M,-2.5,M,,*5D",
+  "$GNRMC,130258.00,A,2526.17070,S,04916.13469,W,0.308,,191125,,,A*69",
+  "$GNGGA,130258.00,2526.17070,S,04916.13469,W,1,09,1.03,969.2,M,-2.5,M,,*54",
+  "$GNRMC,130259.00,A,2526.17015,S,04916.13471,W,0.637,,191125,,,A*6B",
+  "$GNGGA,130259.00,2526.17015,S,04916.13471,W,1,09,1.03,969.1,M,-2.5,M,,*5C",
+  "$GNRMC,130300.00,A,2526.16962,S,04916.13469,W,0.869,,191125,,,A*62",
+  "$GNGGA,130300.00,2526.16962,S,04916.13469,W,1,09,1.03,969.1,M,-2.5,M,,*50",
+  "$GNRMC,130301.00,A,2526.16814,S,04916.13442,W,0.721,,191125,,,A*69",
+  "$GNGGA,130301.00,2526.16814,S,04916.13442,W,1,04,2.24,968.6,M,-2.5,M,,*55",
+  "$GNRMC,130302.00,A,2526.16781,S,04916.13429,W,0.805,,191125,,,A*6D",
+  "$GNGGA,130302.00,2526.16781,S,04916.13429,W,1,04,2.24,968.5,M,-2.5,M,,*5B"
 ]
 
 class MainWindow(QMainWindow):
@@ -96,9 +100,9 @@ class MainWindow(QMainWindow):
         self.is_riding: bool = False
 
         #Queues
-        self.process_gps_queue = Queue()
         self.add_ride_data_queue = Queue()
         self.send_ride_data_queue = Queue()
+        self.process_gps_queue = Queue()
         self.process_crank_data_queue = Queue() #final crank data
         self.crank_reading_queue = Queue() #weight and aceleration
         self.create_msg_queue = Queue()
@@ -108,12 +112,69 @@ class MainWindow(QMainWindow):
         #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
         self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
+
         self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.process_crank_data_queue, self.file_manager_queue)
         from teste.ride.simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
         ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
         self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, ride_path)
         
+        self.shared_ride_state = RideState(app_instance)
+        self.ride_thread = RideThread(
+            app=app_instance,
+            ride_state=self.shared_ride_state,          
+            add_ride_data_queue=self.add_ride_data_queue,
+            file_manager_queue=self.file_manager_queue,
+            send_ride_data_queue=self.send_ride_data_queue
+        )
+
+        self.file_manager_thread = FileManagerThread(
+            app=app_instance,
+            FileManagerQueue=self.file_manager_queue, 
+            SendDataQueue=self.send_ride_data_queue
+            )
+        
+        self.msg_creator_thread = MsgCreatorThread(
+            app=app_instance,
+            ride_state=self.shared_ride_state,
+            AddRideDataQueue=self.add_ride_data_queue,
+            SendDataQueue=self.send_ride_data_queue,
+            CreateMsgQueue=self.create_msg_queue,
+        )
+
+        #MANDAR O DADO DO BLUETOOTH PARA O CRANK PARSER -------- corrigir fila
+        self.crank_parser_thread = CrankParser(
+            in_queue=self.crank_reading_queue,
+            out_queue=self.process_crank_data_queue
+        )
+
+        self.crank_processor_thread = CrankProcessor(
+            in_queue=self.process_crank_data_queue,
+            out_queue=self.create_msg_queue
+        )
+
+        # Connect is riding: 
+# Conexão na sua Classe Controladora Principal
+        self.bluetooth_thread.crank_connection_status.connect(self.shared_ride_state.set_ride_status)
+        self.shared_ride_state.state_changed.connect(self.change_crank_bt_icon)
+        self.shared_ride_state.state_changed.connect(self._on_ride_state_change) 
+        self.shared_ride_state.state_changed.connect(self.map_widget.change_plotting_state)       
+        self.bluetooth_thread.app_connection_status.connect(self.change_app_bt_icon)
+        #Connections
+        
+        self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
+        #self.blinker.blinkerActivated.connect(self.active_blinker_icon)
+        #self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
+
+        # --- Simulation Logic ---
+        self._sim_index = 0
+        self.sim_timer = QTimer(self)
+        self.sim_timer.setInterval(1000) # Send new data every 2 seconds
+        self.sim_timer.timeout.connect(self.send_sim_data)
+
+        # Start the timer
+        self.sim_timer.start()
+
         #Start threads
         #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
@@ -121,32 +182,6 @@ class MainWindow(QMainWindow):
 
         self.bluetooth_thread.start()
 
-        self.shared_ride_state = RideState(app_instance)
-
-        # --- Simulation Logic ---
-        self._sim_index = 0
-        self.sim_timer = QTimer(self)
-        self.sim_timer.setInterval(2000) # Send new data every 2 seconds
-        self.sim_timer.timeout.connect(self.send_sim_data)
-
-        # Start the timer
-        self.sim_timer.start()
-
-
-        #For example, connect a button:
-        self.ui.start_button.clicked.connect(self.map_widget.start_plotting)
-        self.ui.stop_button.clicked.connect(self.map_widget.stop_plotting)
-
-        # Connect is riding: 
-# Conexão na sua Classe Controladora Principal
-        self.bluetooth_thread.crank_connection_status.connect(self.shared_ride_state.set_ride_status)
-        self.shared_ride_state.state_changed.connect(self.change_crank_bt_icon)
-        self.shared_ride_state.state_changed.connect(self._on_ride_state_change)        
-
-        #Connections
-        self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
-        #self.blinker.blinkerActivated.connect(self.active_blinker_icon)
-        #self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
 
     def closeEvent(self, event):
         #self.gps_gather_thread.stop()
@@ -248,24 +283,30 @@ class MainWindow(QMainWindow):
     def change_app_bt_icon(self, app_state):
         if app_state:
             pixmap = QPixmap("icons/app_bt_on.png")
-            self.ui.crank_bt_label.setPixmap(pixmap)
+            self.ui.app_bt_label.setPixmap(pixmap)
         else:
             pixmap = QPixmap("icons/app_bt_off.png")
-            self.ui.crank_bt_label.setPixmap(pixmap)
+            self.ui.app_bt_label.setPixmap(pixmap)
 
     @Slot()
     def change_crank_bt_icon(self, riding_state):
         if riding_state:
             pixmap = QPixmap("icons/crank_bt_on.png")
             self.ui.crank_bt_label.setPixmap(pixmap)
+            
+            #DELETE APP SIMULATION -------------------------------
+            self.bluetooth_thread.app_connection_status.emit(True)
         else:
             pixmap = QPixmap("icons/crank_bt_off.png")
             self.ui.crank_bt_label.setPixmap(pixmap)
             self.clear_crank_data_labels()
+            
+            #DELETE APP SIMULATION -------------------------------
+            self.bluetooth_thread.app_connection_status.emit(False)
 
     def clear_crank_data_labels(self):
-        self.ui.power_label.setText("N/a") #W
-        self.ui.cadence_label.setText("N/a") #RPM
+        self.ui.power_label.setText("--") #W
+        self.ui.cadence_label.setText("--") #RPM
         self.ui.speed_label.setText("--") #km/h
         self.ui.distance_label.setText("--") #m
         self.ui.calories_label.setText("--") #Kcal

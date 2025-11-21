@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QPushButton, QSizePolicy, QStatusBar,
-    QVBoxLayout, QWidget)
+    QMainWindow, QSizePolicy, QStatusBar, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -445,24 +445,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QVBoxLayout(self.map_frame_original)
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(25, 30, 25, 0)
+        self.verticalLayout_4.setContentsMargins(15, 0, 15, 0)
         self.map_frame = QFrame(self.map_frame_original)
         self.map_frame.setObjectName(u"map_frame")
-        self.map_frame.setMaximumSize(QSize(16777215, 350))
-        self.map_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.map_frame.setMaximumSize(QSize(16777215, 440))
+        self.map_frame.setFrameShape(QFrame.Shape.NoFrame)
         self.map_frame.setFrameShadow(QFrame.Shadow.Raised)
 
         self.verticalLayout_4.addWidget(self.map_frame)
-
-        self.start_button = QPushButton(self.map_frame_original)
-        self.start_button.setObjectName(u"start_button")
-
-        self.verticalLayout_4.addWidget(self.start_button)
-
-        self.stop_button = QPushButton(self.map_frame_original)
-        self.stop_button.setObjectName(u"stop_button")
-
-        self.verticalLayout_4.addWidget(self.stop_button)
 
 
         self.horizontalLayout.addWidget(self.map_frame_original)
@@ -509,7 +499,5 @@ class Ui_MainWindow(object):
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Blinker:", None))
         self.blinker_label_left.setText("")
         self.blinker_label_right.setText("")
-        self.start_button.setText(QCoreApplication.translate("MainWindow", u"Start plotting", None))
-        self.stop_button.setText(QCoreApplication.translate("MainWindow", u"Stop plotting", None))
     # retranslateUi
 
