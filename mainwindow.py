@@ -116,7 +116,7 @@ class MainWindow(QMainWindow):
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
 
         self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.process_crank_data_queue, self.file_manager_queue)
-        from teste.ride.simula_ble import MockBleNanoThread
+        from simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
         ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
         self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, ride_path)
