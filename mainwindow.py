@@ -2,10 +2,12 @@
 import sys
 import signal
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout
-from PySide6.QtCore import QTimer, Slot, Signal
+from PySide6.QtCore import QTimer, Slot, Signal, QLocale
 from PySide6.QtGui import QPixmap
 from queue import Queue
 import logging
+
+from clock_updater import DateChangeWatcher
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -152,6 +154,10 @@ class MainWindow(QMainWindow):
             out_queue=self.create_msg_queue
         )
 
+        self.date_watcher = DateChangeWatcher()
+        self.date_watcher.dateChanged.connect(self.update_datetime_labels)
+        self.date_watcher.emit_text()
+
         # Connect is riding: 
 # Conexão na sua Classe Controladora Principal
         self.bluetooth_thread.crank_connection_status.connect(self.shared_ride_state.set_ride_status)
@@ -267,10 +273,17 @@ class MainWindow(QMainWindow):
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = False
 
+    @Slot(str)
+    def update_datetime_labels(self, time):
+        date, time = time.split()
 
-    @Slot()
-    def update_datetime_labels(self):
-        pass
+        month, day = date.split('.')
+
+        #hour, minute = time.split(':')
+
+        pixmap = QPixmap("date_label")
+        self.ui.date_label.setText(f"{day} {month.capitalize()}")
+        self.ui.time_label.setText(time)
 
     @Slot(str)
     def active_blinker_icon(self, direction):
