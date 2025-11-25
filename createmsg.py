@@ -18,7 +18,7 @@ from comm_protocol import (
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class MsgCreatorThread(QThread):
-    update_ui = Signal(TelemetryMsg)
+    update_ui = Signal(TelemetryMsg)  # Sinal para atualizar a UI com dados processados
 
     def __init__(self, 
                  app, 
@@ -67,6 +67,7 @@ class MsgCreatorThread(QThread):
     def run(self):
         while self.is_running:
             try:
+                logging.warning("Waiting for data in CreateMsgQueue...")
                 data = self.CreateMsgQueue.get(timeout=1) # Adicionado timeout
                 origem = data.data_origin
                 match origem:
@@ -95,7 +96,8 @@ class MsgCreatorThread(QThread):
                 return
             
             self.msg.crank = None
-            self.update_ui.emit(self.msg)
+            logging.error("GPS data emitted to UI: %s", self.msg)
+            self.update_ui.emit(self.msg) #Update UI even if not riding
             # send eventUI (lógica da UI aqui) 
         except Exception as e:
             logging.error(f"Erro em GPS data: {e}")
@@ -119,8 +121,9 @@ class MsgCreatorThread(QThread):
                         gps=self.msg.gps,
                         crank=self.msg.crank
                     )
+                    logging.debug("TelemetryMsg sent to RideThread and UI: %s", msg_to_send)
                     self.AddRideDataQueue.put(msg_to_send)
-                    self.update_ui.emit(self.msg)
+                    self.update_ui.emit(msg_to_send)
 
                     # Limpa apenas depois de enviar com sucesso
                     self.msg.gps = None
@@ -131,7 +134,7 @@ class MsgCreatorThread(QThread):
                     logging.warning("[MsgCreator] TelemetryMsg data is not None, but the state is not riding. No data sent to UI and RideThread")
             
             else:
-                logging.warning("[MsgCreator] Could not create TelemetryData. Msg current data is None")
+                logging.warning("[MsgCreator] Could not create TelemetryData. Current Msg is None")
 
         except Exception as e:
             logging.error(f"Erro no cranck: {e}")

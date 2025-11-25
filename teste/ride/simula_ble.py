@@ -3,7 +3,7 @@ import logging
 from queue import Queue, Empty
 from PySide6.QtCore import QThread, Signal, Slot
 
-from comm_protocol import CrankData
+from comm_protocol import CrankData, ProcessedDataMsg, TelemetryOrigin
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -21,9 +21,9 @@ class MockBleNanoThread(QThread):
         self.is_running = True
         super().start()
 
-    def __init__(self, process_crank_data_queue: Queue, file_path: str, parent=None):
+    def __init__(self, create_msg_queue: Queue, file_path: str, parent=None):
         super().__init__(parent)
-        self.process_crank_data_queue = process_crank_data_queue
+        self.create_msg_queue = create_msg_queue
         self.file_path = file_path
         self._is_running = False
         self.setObjectName("MockBleNanoThread")
@@ -65,9 +65,14 @@ class MockBleNanoThread(QThread):
                 crank_data_dict = full_msg_dict.get("crank")
 
                 if crank_data_dict:
-                    self.process_crank_data_queue.put(crank_data_dict)
+                    processed_msg = ProcessedDataMsg(
+                        data_origin=TelemetryOrigin.CRANK,
+                        data=CrankData.from_dict(crank_data_dict),
+                        info=None
+                    )
+                    self.create_msg_queue.put(processed_msg)
                     count += 1
-                    logging.info(f"[MockNano]: Enviou pacote de crank {count} para ProcessCrankDataQueue.")
+                    logging.info(f"[MockNano]: Enviou pacote de crank {count} para CreateMsgQueue.")
                 else:
                     # Pula entradas onde "crank" é null
                     logging.info("[MockNano]: Pacote sem dados de crank, pulando.")
@@ -81,7 +86,7 @@ class MockBleNanoThread(QThread):
         # 4. Simulação concluída, emitir sinal de STOP
         logging.info(f"[MockNano]: Simulação concluída. Enviou {count} pacotes.")
         self.msleep(1000)
-        logging.info("[MockNano]: Desconectando... Emitindo 'nano_disconnected' (para parar a RideThread).")
+        logging.info("[MockNano]: Desconectando... Emitindo 'crank_connection_status[False}]' (para parar a RideThread).")
         self.crank_connection_status.emit(False)
         
         self._is_running = False

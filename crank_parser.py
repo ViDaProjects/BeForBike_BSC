@@ -79,7 +79,7 @@ class CrankParser(QThread):
 
             ble_data =self.in_queue.get(block=True,timeout=0.2)
 
-            logging.info(ble_data)
+            logging.info("[CankParser] %s", ble_data)
             # Colocar booleano se teve leitura (ou bloquear)
             try:
                 if(ble_data):

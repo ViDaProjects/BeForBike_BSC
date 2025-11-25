@@ -16,7 +16,7 @@ from clock_updater import DateChangeWatcher
 from ui_form import Ui_MainWindow
 #from gps_map import MapWidget
 from gps_system import GpsGatherThread, GpsProcessorThread, TestGpsThread, MapWidget
-from comm_protocol import TelemetryMsg, CrankData
+from comm_protocol import TelemetryMsg, CrankData, GpsData
 #from blinker_module import BlinkerSystem
 from comm_protocol import GpsSentenceType, GpsSentences
 from bluetooth import BleManager
@@ -114,12 +114,13 @@ class MainWindow(QMainWindow):
         #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
         self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue, self.create_msg_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
+        self.clear_crank_data_labels()
 
         self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.crank_reading_queue, self.file_manager_queue)
         from teste.ride.simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
         ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
-        self.bluetooth_thread = MockBleNanoThread(self.crank_reading_queue, ride_path)
+        self.bluetooth_thread = MockBleNanoThread(self.create_msg_queue, ride_path)
         
         self.shared_ride_state = RideState(app_instance)
         self.ride_thread = RideThread(
@@ -236,7 +237,8 @@ class MainWindow(QMainWindow):
 
     @Slot(TelemetryMsg)
     def update_ui_with_msg_creator_data(self, data: TelemetryMsg):
-
+        logging.info("[MainWindow] Updating UI with new telemetry data.")
+        
         #update labels of crank data
         if self.is_riding and isinstance(data.crank, CrankData):
             self.ui.power_label.setText(f"{data.crank.power:.1f} W") #W
@@ -244,12 +246,16 @@ class MainWindow(QMainWindow):
             self.ui.speed_label.setText(f"{data.crank.speed:.1f} km/h") #km/h
             self.ui.distance_label.setText(f"{data.crank.distance:.1f} m") #m
             self.ui.calories_label.setText(f"{data.crank.calories:.1f} Kcal") #Kcal
+            logging.info(f"[MainWindow] Crank Data - Power: {data.crank.power}, Cadence: {data.crank.cadence}, Speed: {data.crank.speed}, Distance: {data.crank.distance}, Calories: {data.crank.calories}")
 
         elif self.is_riding and not isinstance(data.crank, CrankData):
             logging.warning("[MainWindow] Riding state is True but no crank data available.")
             self.clear_crank_data_labels()
 
         #Ver o que mandei pro joao
+        if not isinstance(data.gps, GpsData):
+            logging.warning("[MainWindow] No GPS data available in TelemetryMsg to update UI.")
+            return
 
         #gps
         #Update gps data: satellities and quality labels
