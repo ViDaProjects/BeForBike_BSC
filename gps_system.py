@@ -6,6 +6,8 @@ from queue import Queue
 import os
 import logging
 
+from datetime import datetime
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel
 from PySide6.QtCore import QThread, Slot, QUrl, QTimer
 from PySide6.QtQuickWidgets import QQuickWidget
@@ -139,8 +141,14 @@ class GpsProcessorThread(QThread):
                     # Ensure it is a float if it exists
                     safe_altitude = float(self._cached_gga.altitude)
 
+                real_time = datetime.combine(
+                    self._cached_rmc.datestamp,
+                    self._cached_rmc.timestamp  # or _cached_gga.timestamp
+                )
+
                 gps_data_msg = GpsData(
                     timestamp = self._cached_gga.timestamp,
+                    real_time = real_time,
                     latitude = self._cached_gga.latitude,
                     longitude = self._cached_gga.longitude,
                     altitude= safe_altitude,

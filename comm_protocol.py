@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict, field
 from enum import Enum, auto
 from typing import Union, Dict
+from datetime import datetime
 
 # ============================================================
 #  ENUMS - Message types and identifiers
@@ -45,6 +46,7 @@ class GpsSentences:
 class GpsData:
     """ Represents GPS-related measurements. """
     timestamp: str
+    real_time: datetime
     latitude: float
     longitude: float
     altitude: float

@@ -31,6 +31,84 @@ class DateChangeWatcher(QObject):
         if current != self._last_date:
             self._last_date = current
             self.emit_text()
+
+import os
+from ds1302 import DS1302
+from datetime import datetime
+from datetime import datetime, timezone, timedelta
+import logging
+
+# --- Configuration ---
+CLK_PIN = 17  # RTC_CLK -> GPIO17 (Pin 11)
+DAT_PIN = 27  # RTC_DAT -> GPIO27 (Pin 13)
+RST_PIN = 22  # RTC_RST -> GPIO22 (Pin 15)
+
+            
+class GPSClock:
+
+    def __init__(self):
+        self.rtc = None
+        try:
+            self.rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
+            logging.info("RTC DS1302 inicializado com sucesso.")
+        except Exception as e:
+            logging.error(f"[CLOCK_UPDATER]Falha ao inicializar o DS1302: {e}")
+            #self.log.error("Verifique as permissões de GPIO ou se o hardware está conectado.")
         
+    def update_time(self, real_time):
+
+        dt_utc = real_time.replace(tzinfo=timezone.utc)
+        fuso_local_desejado = timezone(timedelta(hours=-3))
+        dt_local = dt_utc.astimezone(fuso_local_desejado)
+
+        if dt_local:
+            day_of_week_to_set = dt_local.isoweekday() # 1=Seg, ... 7=Dom
+
+            date_list = [
+                dt_local.second,
+                dt_local.minute,
+                dt_local.hour,
+                dt_local.day,
+                dt_local.month,
+                day_of_week_to_set,
+                dt_local.year - 2000
+            ]
+            print(date_list)
             
-            
+            try:
+                self.rtc.setDateTime(date_list)
+                logging.info("Time updated correctly\n\n\n")
+            except Exception as e:
+                logging.error(f"Erro ao tentar escrever no RTC: {e}")
+
+        try:
+            rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
+
+            # 1. Get the time from the DS1302 module
+            print("Reading local time from DS1302...")
+            second = rtc.second()
+            minute = rtc.minute()
+            hour = rtc.hour()
+            day = rtc.day()
+            month = rtc.month()
+            year = rtc.year() + 2000 
+            print(day)
+
+            # 2. Format it into a string
+            new_system_time = f"{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}"
+
+            print(f"Time from RTC (Local): {new_system_time}")
+
+            # 3. Use 'os.system' to set the system time
+            print("Setting system time from RTC...")
+            status = os.system(f"sudo date -s '{new_system_time}'") # <<< MUDAN ^gA AQUI (removido --utc)
+            print(status)
+            print("System time updated successfully!")
+
+        except Exception as e:
+            print(f"Error: {e}")
+            print("Failed to sync time from RTC. Is it wired correctly?")
+
+        finally:
+            if 'rtc' in locals():
+                rtc.cleanupGPIO()
