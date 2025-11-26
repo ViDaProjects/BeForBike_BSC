@@ -18,6 +18,7 @@ from PySide6.QtPositioning import QGeoCoordinate
 from comm_protocol import GpsData, GpsSentences, GpsSentenceType, TelemetryMsg, ProcessedDataMsg, TelemetryOrigin, PacketInfo
 
 
+
 class GpsGatherThread(QThread):
     def __init__(self, process_gps_data_queue: Queue):
         super().__init__()
@@ -76,6 +77,7 @@ class GpsProcessorThread(QThread):
     update_ui = Signal(TelemetryMsg)
 
     def __init__(self, process_gps_data_queue: Queue, create_msg_queue: Queue):
+
         super().__init__()
         self.is_running = False
         self.process_gps_queue = process_gps_data_queue
@@ -158,6 +160,9 @@ class GpsProcessorThread(QThread):
                     info = None,
                     gps = gps_data_msg,
                     crank = None)
+                processedData = ProcessedDataMsg(data_origin=TelemetryOrigin.GPS, data=gps_data_msg)
+                self.create_msg_queue.put(processedData)
+                
                 self.update_ui.emit(show_data)
                 """
                 send_data = ProcessedDataMsg(

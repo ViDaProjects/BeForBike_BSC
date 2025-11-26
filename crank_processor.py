@@ -5,7 +5,7 @@ import math
 from PySide6.QtCore import QThread
 from queue import Queue
 
-from comm_protocol import CrankData
+from comm_protocol import CrankData,TelemetryOrigin,ProcessedDataMsg
 
 class CrankProcessor(QThread):
     
@@ -51,8 +51,8 @@ class CrankProcessor(QThread):
 
         # Delta energy
         d_energy = (self.power + self.last_power) / 2
-        if not self.cadence:
-            return
+        #if not self.cadence:
+        #    return
         time = 10
 
         # Total energy
@@ -79,9 +79,9 @@ class CrankProcessor(QThread):
         self.last_power = self.power
 
         data = CrankData(self.power, self.cadence, self.joules, self.calories, self.speed_ms ,self.speed, self.distance)
-        
-        self.out_queue.put(data)
-        print(data)
+        Telemetry = ProcessedDataMsg(TelemetryOrigin.CRANK, data)
+        self.out_queue.put(Telemetry)
+        print(Telemetry)
         #print(self.calories)
         #print(average)
 

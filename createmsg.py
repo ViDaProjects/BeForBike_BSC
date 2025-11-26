@@ -67,9 +67,12 @@ class MsgCreatorThread(QThread):
     def run(self):
         while self.is_running:
             try:
-                logging.warning("Waiting for data in CreateMsgQueue...")
+
                 data = self.CreateMsgQueue.get(timeout=1) # Adicionado timeout
                 origem = data.data_origin
+                #logging.info(f"[Create Message]Mensagem recebida de CreateMsgQueue: {data.data_origin} ")
+                #print("\n\n\n")
+
                 match origem:
                     case TelemetryOrigin.GPS:
                         self.gps_data(data)
@@ -96,9 +99,14 @@ class MsgCreatorThread(QThread):
                 return
             
             self.msg.crank = None
-            logging.error("GPS data emitted to UI: %s", self.msg)
-            self.update_ui.emit(self.msg) #Update UI even if not riding
-            # send eventUI (lógica da UI aqui) 
+            msg_to_send = TelemetryMsg(
+                info=self.msg.info,
+                gps=self.msg.gps,
+                crank=self.msg.crank
+            )
+            self.update_ui.emit(msg_to_send) #Update UI even if not riding
+            logging.debug("[MsgCreator] GPS data emitted to UI: %s", msg_to_send)
+
         except Exception as e:
             logging.error(f"Erro em GPS data: {e}")
     
@@ -109,19 +117,20 @@ class MsgCreatorThread(QThread):
                 return
             
             self.msg.crank = data.data
-            
-            if self.msg.gps is not None and self.msg.crank is not None and self.msg.info is not None:
+
+            if self.msg.gps is not None and self.msg.crank is not None:
 
                 # --- MUDANÇA: Verifica o estado centralizado ---
                 if self.ride_state.is_riding():
                     logging.info("Dados de GPS e Crank recebidos (Corrida ATIVA). Montando e enviando mensagem.")
+                    #print("\n\n\n\n\n\n\n")
 
                     msg_to_send = TelemetryMsg(
                         info=self.msg.info,
                         gps=self.msg.gps,
                         crank=self.msg.crank
                     )
-                    logging.debug("TelemetryMsg sent to RideThread and UI: %s", msg_to_send)
+                    logging.debug("[MsgCreator] TelemetryMsg sent to RideThread and UI: %s", msg_to_send)
                     self.AddRideDataQueue.put(msg_to_send)
                     self.update_ui.emit(msg_to_send)
 
@@ -136,5 +145,6 @@ class MsgCreatorThread(QThread):
             else:
                 logging.warning("[MsgCreator] Could not create TelemetryData. Current Msg is None")
 
+
         except Exception as e:
-            logging.error(f"Erro no cranck: {e}")
+            logging.info(f"Erro no cranck: {e}")
