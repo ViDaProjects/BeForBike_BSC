@@ -98,7 +98,6 @@ class CrankParser(QThread):
     def calculate_data(self):
         t = time.time()
         if t - self.start_time >= 10:
-            print(self.accel)
             
             if len(self.accel) != 0:
                 freq = self.calculate_freq(self.accel, t - self.start_time)
