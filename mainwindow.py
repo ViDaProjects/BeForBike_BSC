@@ -18,7 +18,7 @@ from datetime import datetime
 from ui_form import Ui_MainWindow
 #from gps_map import MapWidget
 from gps_system import GpsGatherThread, GpsProcessorThread, TestGpsThread, MapWidget
-from comm_protocol import TelemetryMsg
+from comm_protocol import TelemetryMsg, CrankData, GpsData
 #from blinker_module import BlinkerSystem
 from comm_protocol import GpsSentenceType, GpsSentences
 from bluetooth import BleManager
@@ -114,14 +114,19 @@ class MainWindow(QMainWindow):
 
         #Threads
         #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
-        self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue)
+        self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue, self.create_msg_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
+        self.clear_crank_data_labels()
 
-        self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.process_crank_data_queue, self.file_manager_queue)
-        from teste.ride.simula_ble import MockBleNanoThread
+        self.bluetooth_thread = BleManager(
+            sendRideDataQueue =self.send_ride_data_queue,
+            ProcessCrankDataQueue =self.crank_reading_queue,
+            FileManagerQueue= self.file_manager_queue)
+        
+        #from teste.ride.simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
         ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
-        self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, ride_path)
+        #self.bluetooth_thread = MockBleNanoThread(self.create_msg_queue, ride_path)
         
         self.shared_ride_state = RideState(app_instance)
         self.ride_thread = RideThread(
@@ -146,7 +151,6 @@ class MainWindow(QMainWindow):
             CreateMsgQueue=self.create_msg_queue,
         )
 
-        #MANDAR O DADO DO BLUETOOTH PARA O CRANK PARSER -------- corrigir fila
         self.crank_parser_thread = CrankParser(
             in_queue=self.crank_reading_queue,
             out_queue=self.process_crank_data_queue
@@ -169,9 +173,14 @@ class MainWindow(QMainWindow):
         self.shared_ride_state.state_changed.connect(self.map_widget.change_plotting_state)       
         self.bluetooth_thread.app_connection_status.connect(self.change_app_bt_icon)
         self.update_rtc_by_gps.connect(self.update_clock_from_gps)
+        self.file_manager_thread.id.connect(self.ride_thread.set_ride_id)
         #Connections
         
-        self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
+
+        """ CRIAR SINAL NO MsgCreatorThread PARA ATUALIZAR A UI COM DADOS NOVOS """
+        self.msg_creator_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
+        
+      
         #self.blinker.blinkerActivated.connect(self.active_blinker_icon)
         #self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
 
@@ -188,22 +197,39 @@ class MainWindow(QMainWindow):
         #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
         #self.gps_tester_thread.start()
+        self.ride_thread.start()
+        self.file_manager_thread.start()
+        self.msg_creator_thread.start()
+        self.crank_parser_thread.start()
+        self.crank_processor_thread.start()
+
+
+        self.crank_parser_thread.start()
+        self.crank_processor_thread.start()
 
         self.bluetooth_thread.start()
-
+        self.msg_creator_thread.start()
+        self.file_manager_thread.start()
+        self.ride_thread.start()
 
     def closeEvent(self, event):
         #self.gps_gather_thread.stop()
         self.gps_processor_thread.stop()
         #self.gps_tester_thread.stop()
         self.bluetooth_thread.stop()
+        self.ride_thread.stop()
+        self.file_manager_thread.stop()
+        self.msg_creator_thread.stop()
+        self.crank_parser_thread.stop()
+        self.crank_processor_thread.stop()
+
         event.accept()
 
     def send_sim_data(self):
         """Simulates receiving a NMEA sentence."""
         if self._sim_index < len(SIM_NMEA_DATA):
             sentence = SIM_NMEA_DATA[self._sim_index]
-            logging.info(f"Simulating RX: {sentence}")
+            logging.info(f"[GPS Simulator] Simulating RX: {sentence}")
             type = None
             if sentence.startswith("$GNGGA"):
                 type = GpsSentenceType.GGA
@@ -211,37 +237,44 @@ class MainWindow(QMainWindow):
                 type = GpsSentenceType.RMC
             else:
                 # Log what was received that wasn't a recognized sentence
-                #logging.debug("[GPS Gather] Unrecognized sentence: %s", newdata)
+                #logging.debug("[GPS Simulator] Unrecognized sentence: %s", newdata)
                 pass
 
             sentence = GpsSentences(type=type, data=sentence)
-            logging.debug("[GPS Gather] Got sentence: %s", sentence)
+            logging.debug("[GPS Simulator] Got sentence: %s", sentence)
             self.process_gps_queue.put(sentence)
             #self.map_widget.process_nmea_sentence(sentence)
             self._sim_index += 1
         else:
-            logging.info("End of simulation data.")
+            logging.info("[GPS Simulator] End of simulation data.")
             self.sim_timer.stop()
 
     @Slot(bool)
     def _on_ride_state_change(self, is_riding: bool):
-        logging.info(f"The riding state has changed, it is now: {is_riding}")
+        logging.info(f"[MainWindow] The riding state has changed, it is now: {is_riding}")
         self.is_riding = is_riding
 
     @Slot(TelemetryMsg)
     def update_ui_with_msg_creator_data(self, data: TelemetryMsg):
-
-        #if is riding
-        # In theory solved elsewhere, self.is_riding is being updated automatically
-
-        # Get start bluetooth with crank signal and get bluetooth with crank failed connection signal
+        logging.info("[MainWindow] Updating UI with new telemetry data.")
         
+        #update labels of crank data
+        if self.is_riding and isinstance(data.crank, CrankData):
+            self.ui.power_label.setText(f"{data.crank.power:.1f} W") #W
+            self.ui.cadence_label.setText(f"{data.crank.cadence:.1f} RPM") #RPM
+            self.ui.speed_label.setText(f"{data.crank.speed:.1f} km/h") #km/h
+            self.ui.distance_label.setText(f"{data.crank.distance:.1f} m") #m
+            self.ui.calories_label.setText(f"{data.crank.calories:.1f} Kcal") #Kcal
+            logging.info(f"[MainWindow] Crank Data - Power: {data.crank.power}, Cadence: {data.crank.cadence}, Speed: {data.crank.speed}, Distance: {data.crank.distance}, Calories: {data.crank.calories}")
 
-        #atualizar labels do crank
-        #if Not riding
-        #labels with --
+        elif self.is_riding and not isinstance(data.crank, CrankData):
+            logging.warning("[MainWindow] Riding state is True but no crank data available.")
+            self.clear_crank_data_labels()
 
         #Ver o que mandei pro joao
+        if not isinstance(data.gps, GpsData):
+            logging.warning("[MainWindow] No GPS data available in TelemetryMsg to update UI.")
+            return
 
         #gps
         #Update gps data: satellities and quality labels
@@ -319,7 +352,7 @@ class MainWindow(QMainWindow):
             pixmap = QPixmap("icons/crank_bt_off.png")
             self.ui.crank_bt_label.setPixmap(pixmap)
             self.clear_crank_data_labels()
-            
+
             #DELETE APP SIMULATION -------------------------------
             self.bluetooth_thread.app_connection_status.emit(False)
 
@@ -341,7 +374,7 @@ if __name__ == "__main__":
     widget = MainWindow(app)
     widget.showFullScreen()
 
-    logging.info("Running HMI")
+    logging.info("[MainWindow] Running HMI")
     # 2. The try/except block is no longer necessary here
     # as the signal handler will handle the Ctrl+C directly.
     # The application will terminate correctly when SIGINT is received.

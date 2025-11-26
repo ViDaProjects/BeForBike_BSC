@@ -1,7 +1,7 @@
 # createmsg.py
 import sys
 import signal
-from PySide6.QtCore import QCoreApplication, Slot, QThread, QMutex
+from PySide6.QtCore import QCoreApplication, Slot, QThread, QMutex, Signal
 from queue import Queue,Empty
 import logging
 import json
@@ -18,6 +18,8 @@ from comm_protocol import (
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class MsgCreatorThread(QThread):
+    update_ui = Signal(TelemetryMsg)  # Sinal para atualizar a UI com dados processados
+
     def __init__(self, 
                  app, 
                  ride_state: RideState,        # <-- MUDANÇA: Recebe o estado
@@ -65,8 +67,12 @@ class MsgCreatorThread(QThread):
     def run(self):
         while self.is_running:
             try:
+
                 data = self.CreateMsgQueue.get(timeout=1) # Adicionado timeout
                 origem = data.data_origin
+                #logging.info(f"[Create Message]Mensagem recebida de CreateMsgQueue: {data.data_origin} ")
+                #print("\n\n\n")
+
                 match origem:
                     case TelemetryOrigin.GPS:
                         self.gps_data(data)
@@ -91,40 +97,54 @@ class MsgCreatorThread(QThread):
             
             if self.ride_state.is_riding():
                 return
-            # send eventUI (lógica da UI aqui)
-            self.msg.gps = None
+            
+            self.msg.crank = None
+            msg_to_send = TelemetryMsg(
+                info=self.msg.info,
+                gps=self.msg.gps,
+                crank=self.msg.crank
+            )
+            self.update_ui.emit(msg_to_send) #Update UI even if not riding
+            logging.debug("[MsgCreator] GPS data emitted to UI: %s", msg_to_send)
 
-                
         except Exception as e:
             logging.error(f"Erro em GPS data: {e}")
     
-    def crank_data(self, data):
+    def crank_data(self, data: ProcessedDataMsg):
         try:
             if data.data is None:
+                logging.warning("[MsgCreator] ProcessedDataMsg from Crank, but no data is available")
                 return
-            self.msg.crank = data.data
             
-            if self.msg.gps is not None and self.msg.crank is not None and self.msg.info is not None:
+            self.msg.crank = data.data
+
+            if self.msg.gps is not None and self.msg.crank is not None:
 
                 # --- MUDANÇA: Verifica o estado centralizado ---
                 if self.ride_state.is_riding():
                     logging.info("Dados de GPS e Crank recebidos (Corrida ATIVA). Montando e enviando mensagem.")
+                    #print("\n\n\n\n\n\n\n")
 
                     msg_to_send = TelemetryMsg(
                         info=self.msg.info,
                         gps=self.msg.gps,
                         crank=self.msg.crank
                     )
+                    logging.debug("[MsgCreator] TelemetryMsg sent to RideThread and UI: %s", msg_to_send)
                     self.AddRideDataQueue.put(msg_to_send)
+                    self.update_ui.emit(msg_to_send)
 
                     # Limpa apenas depois de enviar com sucesso
                     self.msg.gps = None
                     self.msg.info = None
                     self.msg.crank = None
+
+                else:
+                    logging.warning("[MsgCreator] TelemetryMsg data is not None, but the state is not riding. No data sent to UI and RideThread")
             
-            # else:
-                # if not self.ride_state.is_riding():
-                    # send eventUI EVENT (lógica da UI aqui)
+            else:
+                logging.warning("[MsgCreator] Could not create TelemetryData. Current Msg is None")
+
 
         except Exception as e:
-            logging.error(f"Erro no cranck: {e}")
+            logging.info(f"Erro no cranck: {e}")

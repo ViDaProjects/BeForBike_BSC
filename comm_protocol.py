@@ -1,7 +1,7 @@
 from dataclasses import dataclass, asdict, field
 from enum import Enum, auto
 from typing import Union, Dict
-from datetime import datetime
+from datetime import time, datetime
 
 # ============================================================
 #  ENUMS - Message types and identifiers
@@ -56,7 +56,12 @@ class GpsData:
     fix_quality: int
 
     def to_dict(self):
-        return asdict(self)
+        data = asdict(self)
+        if isinstance(self.timestamp, (time, datetime)):
+            data['timestamp'] = self.timestamp.isoformat()
+            
+        return data
+        #return asdict(self)
 
     @staticmethod
     def from_dict(data: Dict):
