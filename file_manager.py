@@ -23,8 +23,7 @@ class FileManagerThread(QThread):
         self.FileManagerQueue = FileManagerQueue
         self.SendDataQueue = SendDataQueue
        
-
-        self.pasta_alvo = Path("./rides")
+        self.pasta_alvo = Path(__file__).resolve().parent / "rides"
         self.count_rides_file = self.pasta_alvo / "ride_count.txt"
         self.app = app
 

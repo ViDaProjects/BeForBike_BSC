@@ -80,7 +80,7 @@ class CrankParser(QThread):
             ble_data =self.in_queue.get(block=True,timeout=0.2)
             #print(ble_data)
 
-            #logging.info(ble_data)
+            logging.info("[CankParser] %s", ble_data)
             # Colocar booleano se teve leitura (ou bloquear)
             try:
                 if(ble_data):
@@ -88,9 +88,7 @@ class CrankParser(QThread):
                     self.weight += ble_data.w
                     self.count += 1 
             except Exception as e:
-                logging.error(f"Erro em colocar dados na fila{e}")
-                #print(f"Erro em colocar dados na fila{e}")
-
+                logging.error(f"[CrankParser] Erro em colocar dados na fila{e}")
 
         except Exception as e:
             pass#logging.error(f"Erro em extrair dados da fila {e}")

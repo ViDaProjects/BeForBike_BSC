@@ -15,7 +15,8 @@ from PySide6.QtCore import (
 )
 from PySide6.QtPositioning import QGeoCoordinate
 
-from comm_protocol import GpsData, GpsSentences, GpsSentenceType, TelemetryMsg,ProcessedDataMsg,TelemetryOrigin
+from comm_protocol import GpsData, GpsSentences, GpsSentenceType, TelemetryMsg, ProcessedDataMsg, TelemetryOrigin, PacketInfo
+
 
 
 class GpsGatherThread(QThread):
@@ -75,7 +76,8 @@ class GpsProcessorThread(QThread):
     #Change here --- Emit this signal by msgCreator ------------
     update_ui = Signal(TelemetryMsg)
 
-    def __init__(self, process_gps_data_queue: Queue,create_msg_queue: Queue):
+    def __init__(self, process_gps_data_queue: Queue, create_msg_queue: Queue):
+
         super().__init__()
         self.is_running = False
         self.process_gps_queue = process_gps_data_queue
@@ -154,7 +156,7 @@ class GpsProcessorThread(QThread):
                 logging.info(f"[GPS Processor] Valid DD Coords: {gps_data_msg.latitude}, {gps_data_msg.longitude}")
 
                 #Change this to send ProcessedDataMsg to CreateMsgQueue -------------------------
-                show_data = TelemetryMsg(
+                """show_data = TelemetryMsg(
                     info = None,
                     gps = gps_data_msg,
                     crank = None)
@@ -162,7 +164,14 @@ class GpsProcessorThread(QThread):
                 self.create_msg_queue.put(processedData)
                 
                 self.update_ui.emit(show_data)
-
+                """
+                send_data = ProcessedDataMsg(
+                    data_origin = TelemetryOrigin.GPS,
+                    data = gps_data_msg,
+                    info = PacketInfo(ride_id=None, date=gps_data_msg.timestamp, time=gps_data_msg.timestamp)
+                )
+                self.create_msg_queue.put(send_data)
+                
 class TestGpsThread(QThread):
     def __init__(self, show_data_queue: Queue):
         super().__init__()
