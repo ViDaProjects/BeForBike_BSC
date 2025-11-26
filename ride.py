@@ -155,7 +155,6 @@ class RideThread(QThread):
                         #telemetry_msg.info= ride_id_for_this_ride
                         telemetry_msg.info = PacketInfo(ride_id=ride_id_for_this_ride,date="None",time="None")
                         logging.info(f"[RideThread]: Coletado ponto de telemetria  {telemetry_msg}.")
-                        print("\n\n\n\n\n\n\n")
                     else:
                         #logging.info("RideThread: Mensagem sem 'info', pulando.")
                         continue

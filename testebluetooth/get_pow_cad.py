@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 import logging
 
-from comm_protocol import CrankData, PowerData
+from comm_protocol import CrankData
 
 DURACAO_COLETA_SEGUNDOS = 1 * 60 
 
-class CrankParser(QThread):
+class CrankProcess(QThread):
     
     ''' Data from the crank: cadence, power '''
 
@@ -37,7 +37,7 @@ class CrankParser(QThread):
 
         # Compute the frequency axis
         sample_rate = len(readings) / time  # Hz
-
+        print(sample_rate)
         n = len(readings)
         freqs = np.fft.fftfreq(n, 1/sample_rate)
 
@@ -48,7 +48,7 @@ class CrankParser(QThread):
 
         # --- Extract dominant frequencies ---
         # Find peaks in the FFT magnitude
-        peaks, _ = find_peaks(fft_magnitude, height=np.max(fft_magnitude)*0.2)  # adjust threshold if needed
+        peaks, _ = find_peaks(fft_magnitude, height=np.max(fft_magnitude)*0.5)  # adjust threshold if needed
 
         # Sort peaks by magnitude (descending)
         top_indices = peaks[np.argsort(fft_magnitude[peaks])][::-1]
@@ -61,13 +61,11 @@ class CrankParser(QThread):
         weighted_avg = 0
 
         for i in range(len(top_freqs)):
-            if top_freqs[i] < 1:
-                weighted_avg += top_freqs[i] * top_mags[i]
+            weighted_avg += top_freqs[i] * top_mags[i]
         if top_mags.sum() == 0:
-            logging.info("Person is stopped")
+            print("Person is stopped")
             return 0
         weighted_avg /= top_mags.sum()
-        #print(weighted_avg)
         return weighted_avg
 
     # Refazer pra pegar da queue de verdade (as variáveis fake não são necessárias, apenas setar power e cadence)
@@ -77,31 +75,29 @@ class CrankParser(QThread):
         # Trocar pelas leituras do bluetooth
         try:
 
-            ble_data =self.in_queue.get(block=True,timeout=0.2)
-            #print(ble_data)
+            ble_data =self.in_queue.get(block=True,timeout=0.1)
 
-            #logging.info("[CankParser] %s", ble_data)
+        
             # Colocar booleano se teve leitura (ou bloquear)
             try:
                 if(ble_data):
-                    self.accel.append(ble_data.a)
-                    self.weight += ble_data.w
+                    self.accel.append(ble_data["a"])
+                    self.weight += ble_data["w"]
                     self.count += 1 
             except Exception as e:
-                logging.error(f"[CrankParser] Erro em colocar dados na fila{e}")
+                logging.error(f"Erro em colocar dados na fila{e}")
 
         except Exception as e:
-            pass#logging.error(f"Erro em extrair dados da fila {e}")
+            logging.error(f"Erro em extrair dados da fila {e}")
 
         return ((time.time() - self.start_time) >= 10)
 
     def calculate_data(self):
         t = time.time()
         if t - self.start_time >= 10:
-            
+
             if len(self.accel) != 0:
                 freq = self.calculate_freq(self.accel, t - self.start_time)
-                
             else:
                 freq = 0
 
@@ -132,17 +128,21 @@ class CrankParser(QThread):
             self.count = 0
             self.weight = 0
             self.accel = []
+
+            print(self.accel)
+            print("power:")
+            print(self.power)
+            print("accel")
+            print(self.accel)
+
             
-            data = PowerData(cadence = self.cadence,power = self.power)
-            logging.info(data)
-            self.out_queue.put(data)
         
             # Jogar power e cadence na tabela
 
     def run(self):
         self.running = True
+        
         while(self.running):
-            
             if self.get_from_queue():
                 self.calculate_data()
             #            time.sleep(0.4) # Precisaria andar a uns 70++kmh para passar disso 

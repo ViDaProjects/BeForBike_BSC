@@ -7,7 +7,9 @@ from PySide6.QtGui import QPixmap
 from queue import Queue
 import logging
 
-from clock_updater import DateChangeWatcher
+from clock_updater import DateChangeWatcher, GPSClock
+from datetime import datetime
+
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -81,7 +83,7 @@ SIM_NMEA_DATA = [
 ]
 
 class MainWindow(QMainWindow):
-    update_rtc_by_gps = Signal()
+    update_rtc_by_gps = Signal(datetime)
 
     def __init__(self, app_instance, parent=None):
         super().__init__(parent)
@@ -170,6 +172,7 @@ class MainWindow(QMainWindow):
         self.shared_ride_state.state_changed.connect(self._on_ride_state_change) 
         self.shared_ride_state.state_changed.connect(self.map_widget.change_plotting_state)       
         self.bluetooth_thread.app_connection_status.connect(self.change_app_bt_icon)
+        self.update_rtc_by_gps.connect(self.update_clock_from_gps)
         self.file_manager_thread.id.connect(self.ride_thread.set_ride_id)
         #Connections
         
@@ -287,21 +290,25 @@ class MainWindow(QMainWindow):
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = True
             if self.its_first_fix:
-                self.update_rtc_by_gps.emit()
+                self.update_rtc_by_gps.emit(data.info.date)
                 self.its_first_fix = False
 
         elif data.gps.fix_quality == 0 and self.has_fix_position:
             pixmap = QPixmap("icons/gps_off.svg")
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = False
+    
+    @Slot(datetime)
+    def update_clock_from_gps(self, real_time):
+        real_time = datetime.strptime(real_time, "%Y-%m-%d %H:%M:%S")
+        updater = GPSClock()
+        updater.update_time(real_time)
 
     @Slot(str)
     def update_datetime_labels(self, time):
         date, time = time.split()
 
         month, day = date.split('.')
-
-        #hour, minute = time.split(':')
 
         pixmap = QPixmap("date_label")
         self.ui.date_label.setText(f"{day} {month.capitalize()}")

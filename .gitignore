@@ -5,6 +5,8 @@
 mapa3_curitiba/
 mapa_menor/
 
+.venv/
+
 *~
 *.autosave
 *.a
