@@ -121,10 +121,10 @@ class MainWindow(QMainWindow):
             ProcessCrankDataQueue =self.crank_reading_queue,
             FileManagerQueue= self.file_manager_queue)
         
-        #from teste.ride.simula_ble import MockBleNanoThread
+        from teste.ride.simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
         ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
-        #self.bluetooth_thread = MockBleNanoThread(self.create_msg_queue, ride_path)
+        self.bluetooth_thread = MockBleNanoThread(self.create_msg_queue, ride_path)
         
         self.shared_ride_state = RideState(app_instance)
         self.ride_thread = RideThread(
@@ -189,25 +189,20 @@ class MainWindow(QMainWindow):
 
         # Start the timer
         self.sim_timer.start()
+        
 
         #Start threads
         #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
-        #self.gps_tester_thread.start()
+
         self.ride_thread.start()
         self.file_manager_thread.start()
         self.msg_creator_thread.start()
         self.crank_parser_thread.start()
         self.crank_processor_thread.start()
 
-
-        self.crank_parser_thread.start()
-        self.crank_processor_thread.start()
-
+        self.bluetooth_thread.msleep(1000)  # Aguarda meio segundo para garantir que o Bluetooth esteja pronto
         self.bluetooth_thread.start()
-        self.msg_creator_thread.start()
-        self.file_manager_thread.start()
-        self.ride_thread.start()
 
     def closeEvent(self, event):
         #self.gps_gather_thread.stop()
@@ -339,16 +334,10 @@ class MainWindow(QMainWindow):
         if riding_state:
             pixmap = QPixmap("icons/crank_bt_on.png")
             self.ui.crank_bt_label.setPixmap(pixmap)
-            
-            #DELETE APP SIMULATION -------------------------------
-            self.bluetooth_thread.app_connection_status.emit(True)
         else:
             pixmap = QPixmap("icons/crank_bt_off.png")
             self.ui.crank_bt_label.setPixmap(pixmap)
             self.clear_crank_data_labels()
-
-            #DELETE APP SIMULATION -------------------------------
-            self.bluetooth_thread.app_connection_status.emit(False)
 
     def clear_crank_data_labels(self):
         self.ui.power_label.setText("--") #W

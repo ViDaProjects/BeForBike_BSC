@@ -67,7 +67,7 @@ class CrankParser(QThread):
             print("Person is stopped")
             return 0
         weighted_avg /= top_mags.sum()
-        print(weighted_avg)
+        #print(weighted_avg)
         return weighted_avg
 
     # Refazer pra pegar da queue de verdade (as variáveis fake não são necessárias, apenas setar power e cadence)
@@ -98,7 +98,7 @@ class CrankParser(QThread):
     def calculate_data(self):
         t = time.time()
         if t - self.start_time >= 10:
-            print(self.accel)
+            #print(self.accel)
             
             if len(self.accel) != 0:
                 freq = self.calculate_freq(self.accel, t - self.start_time)
@@ -135,7 +135,7 @@ class CrankParser(QThread):
             self.accel = []
             
             data = PowerData(cadence = self.cadence,power = self.power)
-            logging.info(data)
+            #logging.info(data)
             self.out_queue.put(data)
         
             # Jogar power e cadence na tabela
