@@ -50,9 +50,9 @@ class GPSClock:
         self.rtc = None
         try:
             self.rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
-            logging.info("RTC DS1302 inicializado com sucesso.")
+            logging.info("[CLOCK_UPDATER] RTC DS1302 inicializado com sucesso.")
         except Exception as e:
-            logging.error(f"[CLOCK_UPDATER]Falha ao inicializar o DS1302: {e}")
+            logging.error(f"[CLOCK_UPDATER] Falha ao inicializar o DS1302: {e}")
             #self.log.error("Verifique as permissões de GPIO ou se o hardware está conectado.")
         
     def update_time(self, real_time):
@@ -73,41 +73,39 @@ class GPSClock:
                 day_of_week_to_set,
                 dt_local.year - 2000
             ]
-            print(date_list)
             
             try:
                 self.rtc.setDateTime(date_list)
-                logging.info("Time updated correctly\n\n\n")
+                logging.info("[CLOCK_UPDATER] Time updated correctly")
             except Exception as e:
-                logging.error(f"Erro ao tentar escrever no RTC: {e}")
+                logging.error(f"[CLOCK_UPDATER] Erro ao tentar escrever no RTC: {e}")
 
         try:
             rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
 
             # 1. Get the time from the DS1302 module
-            print("Reading local time from DS1302...")
+            logging.info("[GPS_CLOCK_UPDATER] Reading local time from DS1302...")
             second = rtc.second()
             minute = rtc.minute()
             hour = rtc.hour()
             day = rtc.day()
             month = rtc.month()
-            year = rtc.year() + 2000 
-            print(day)
+            year = rtc.year() + 2000
 
             # 2. Format it into a string
             new_system_time = f"{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}"
 
-            print(f"Time from RTC (Local): {new_system_time}")
+            logging.info(f"[CLOCK_UPDATER] Time from RTC (Local): {new_system_time}")
 
             # 3. Use 'os.system' to set the system time
-            print("Setting system time from RTC...")
+            logging.info("[CLOCK_UPDATER] Setting system time from RTC...")
             status = os.system(f"sudo date -s '{new_system_time}'") # <<< MUDAN ^gA AQUI (removido --utc)
-            print(status)
-            print("System time updated successfully!")
+            logging.info("[CLOCK_UPDATER] {status}")
+            logging.info("[CLOCK_UPDATER] System time updated successfully!")
 
         except Exception as e:
-            print(f"Error: {e}")
-            print("Failed to sync time from RTC. Is it wired correctly?")
+            logging.info(f"[CLOCK_UPDATER] Error: {e}")
+            logging.info("[CLOCK_UPDATER] Failed to sync time from RTC. Is it wired correctly?")
 
         finally:
             if 'rtc' in locals():
