@@ -64,10 +64,10 @@ class CrankParser(QThread):
             if top_freqs[i] < 1:
                 weighted_avg += top_freqs[i] * top_mags[i]
         if top_mags.sum() == 0:
-            print("Person is stopped")
+            logging.info("Person is stopped")
             return 0
         weighted_avg /= top_mags.sum()
-        print(weighted_avg)
+        #print(weighted_avg)
         return weighted_avg
 
     # Refazer pra pegar da queue de verdade (as variáveis fake não são necessárias, apenas setar power e cadence)
@@ -80,7 +80,7 @@ class CrankParser(QThread):
             ble_data =self.in_queue.get(block=True,timeout=0.2)
             #print(ble_data)
 
-            logging.info("[CankParser] %s", ble_data)
+            #logging.info("[CankParser] %s", ble_data)
             # Colocar booleano se teve leitura (ou bloquear)
             try:
                 if(ble_data):

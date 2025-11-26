@@ -33,7 +33,10 @@ class DateChangeWatcher(QObject):
             self.emit_text()
 
 import os
-from ds1302 import DS1302
+#try:
+#    from ds1302 import DS1302
+#except:
+#    logging.info("[CLOCK_UPDATER] Real time clock library does not exist")
 from datetime import datetime
 from datetime import datetime, timezone, timedelta
 import logging
@@ -49,6 +52,7 @@ class GPSClock:
     def __init__(self):
         self.rtc = None
         try:
+            from ds1302 import DS1302
             self.rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
             logging.info("[CLOCK_UPDATER] RTC DS1302 inicializado com sucesso.")
         except Exception as e:
@@ -81,16 +85,16 @@ class GPSClock:
                 logging.error(f"[CLOCK_UPDATER] Erro ao tentar escrever no RTC: {e}")
 
         try:
-            rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
+            
 
             # 1. Get the time from the DS1302 module
             logging.info("[GPS_CLOCK_UPDATER] Reading local time from DS1302...")
-            second = rtc.second()
-            minute = rtc.minute()
-            hour = rtc.hour()
-            day = rtc.day()
-            month = rtc.month()
-            year = rtc.year() + 2000
+            second = self.rtc.second()
+            minute = self.rtc.minute()
+            hour = self.rtc.hour()
+            day = self.rtc.day()
+            month = self.rtc.month()
+            year = self.rtc.year() + 2000
 
             # 2. Format it into a string
             new_system_time = f"{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}"
@@ -109,4 +113,4 @@ class GPSClock:
 
         finally:
             if 'rtc' in locals():
-                rtc.cleanupGPIO()
+                self.rtc.cleanupGPIO()
