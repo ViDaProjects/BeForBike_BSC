@@ -65,8 +65,24 @@ class MsgCreatorThread(QThread):
     def run(self):
         while self.is_running:
             try:
+                #try:
+                #    self.crank_data = self.CrankQueue.get(timeout = 0.4)
+                #    self.updated_crank_data = True
+                #except:
+                #    pass
+                #try:
+                #    self.gps_data = self.GpsQueue.get(timeout = 0.4)
+                #    self.updated_gps_data = True
+                #except:
+                #    pass
+
+
+
                 data = self.CreateMsgQueue.get(timeout=1) # Adicionado timeout
                 origem = data.data_origin
+                #logging.info(f"[Create Message]Mensagem recebida de CreateMsgQueue: {data.data_origin} ")
+                #print("\n\n\n")
+
                 match origem:
                     case TelemetryOrigin.GPS:
                         self.gps_data(data)
@@ -103,12 +119,13 @@ class MsgCreatorThread(QThread):
             if data.data is None:
                 return
             self.msg.crank = data.data
-            
-            if self.msg.gps is not None and self.msg.crank is not None and self.msg.info is not None:
+
+            if self.msg.gps is not None and self.msg.crank is not None:
 
                 # --- MUDANÇA: Verifica o estado centralizado ---
                 if self.ride_state.is_riding():
                     logging.info("Dados de GPS e Crank recebidos (Corrida ATIVA). Montando e enviando mensagem.")
+                    #print("\n\n\n\n\n\n\n")
 
                     msg_to_send = TelemetryMsg(
                         info=self.msg.info,
@@ -116,15 +133,17 @@ class MsgCreatorThread(QThread):
                         crank=self.msg.crank
                     )
                     self.AddRideDataQueue.put(msg_to_send)
-
+                    logging.info(f"[Create Message]Mensagem enviada para AddRideDataQueue: {msg_to_send}")
+                    #print("\n\n\n\n\n\n\n")
                     # Limpa apenas depois de enviar com sucesso
                     self.msg.gps = None
                     self.msg.info = None
                     self.msg.crank = None
             
-            # else:
+            #else:
+                #print("Aguardando mais dados para criar a mensagem...")
                 # if not self.ride_state.is_riding():
                     # send eventUI EVENT (lógica da UI aqui)
 
         except Exception as e:
-            logging.error(f"Erro no cranck: {e}")
+            logging.info(f"Erro no cranck: {e}")

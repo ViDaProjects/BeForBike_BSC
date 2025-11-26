@@ -78,6 +78,7 @@ class CrankParser(QThread):
         try:
 
             ble_data =self.in_queue.get(block=True,timeout=0.2)
+            #print(ble_data)
 
             #logging.info(ble_data)
             # Colocar booleano se teve leitura (ou bloquear)
@@ -88,6 +89,8 @@ class CrankParser(QThread):
                     self.count += 1 
             except Exception as e:
                 logging.error(f"Erro em colocar dados na fila{e}")
+                #print(f"Erro em colocar dados na fila{e}")
+
 
         except Exception as e:
             pass#logging.error(f"Erro em extrair dados da fila {e}")
@@ -141,8 +144,8 @@ class CrankParser(QThread):
 
     def run(self):
         self.running = True
-        
         while(self.running):
+            
             if self.get_from_queue():
                 self.calculate_data()
             #            time.sleep(0.4) # Precisaria andar a uns 70++kmh para passar disso 

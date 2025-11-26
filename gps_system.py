@@ -15,7 +15,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtPositioning import QGeoCoordinate
 
-from comm_protocol import GpsData, GpsSentences, GpsSentenceType, TelemetryMsg
+from comm_protocol import GpsData, GpsSentences, GpsSentenceType, TelemetryMsg,ProcessedDataMsg,TelemetryOrigin
 
 
 class GpsGatherThread(QThread):
@@ -75,10 +75,11 @@ class GpsProcessorThread(QThread):
     #Change here --- Emit this signal by msgCreator ------------
     update_ui = Signal(TelemetryMsg)
 
-    def __init__(self, process_gps_data_queue: Queue):
+    def __init__(self, process_gps_data_queue: Queue,create_msg_queue: Queue):
         super().__init__()
         self.is_running = False
         self.process_gps_queue = process_gps_data_queue
+        self.create_msg_queue = create_msg_queue
         # NEW: Caches for assembling data from multiple sentences
         #Only GPS integrated for now (not updating timestamp) ----------------
         self._cached_gga = {}
@@ -157,6 +158,9 @@ class GpsProcessorThread(QThread):
                     info = None,
                     gps = gps_data_msg,
                     crank = None)
+                processedData = ProcessedDataMsg(data_origin=TelemetryOrigin.GPS, data=gps_data_msg)
+                self.create_msg_queue.put(processedData)
+                
                 self.update_ui.emit(show_data)
 
 class TestGpsThread(QThread):

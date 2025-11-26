@@ -11,7 +11,8 @@ from comm_protocol import (
     FileMngMsgId,
     FileManagerMsg,
     RideDataMsg,
-    TelemetryMsg
+    TelemetryMsg,
+    PacketInfo
 )
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -133,6 +134,7 @@ class RideThread(QThread):
 
             # 4. Espera pelo ride_id
             self._mutex.lock()
+            
             while self._current_ride_id is None:
                 if not self.is_running:
                     self._mutex.unlock()
@@ -148,12 +150,14 @@ class RideThread(QThread):
             # 5. Loop principal de coleta de dados
             while True:
                 try:
-                    telemetry_msg: TelemetryMsg = self.add_ride_data_queue.get(timeout=0.1)
-                    
-                    if telemetry_msg.info:
-                        telemetry_msg.info.ride_id = ride_id_for_this_ride
+                    telemetry_msg = self.add_ride_data_queue.get(timeout=0.1)
+                    if telemetry_msg:
+                        #telemetry_msg.info= ride_id_for_this_ride
+                        telemetry_msg.info = PacketInfo(ride_id=ride_id_for_this_ride,date="None",time="None")
+                        logging.info(f"[RideThread]: Coletado ponto de telemetria  {telemetry_msg}.")
+                        print("\n\n\n\n\n\n\n")
                     else:
-                        logging.warning("RideThread: Mensagem sem 'info', pulando.")
+                        #logging.info("RideThread: Mensagem sem 'info', pulando.")
                         continue
                         
                     json_string = json.dumps(telemetry_msg.to_dict())
@@ -177,7 +181,7 @@ class RideThread(QThread):
             
             # 6. Salva os dados
             if self.is_running and self._telemetry_log:
-                logging.info(f"RideThread: Enviando dados para FileManagerQueue ({file_name})...")
+                logging.info(f"[RideThread]: Enviando dados para FileManagerQueue ({file_name})...")
                 file_msg = FileManagerMsg(
                     msg_id=FileMngMsgId.CREATE_FILE,
                     file_name=file_name,
@@ -185,7 +189,7 @@ class RideThread(QThread):
                 )
                 self.file_manager_queue.put(file_msg)
 
-                logging.info(f"RideThread: Enviando dados para SendRideDataQueue ({file_name})...")
+                logging.info(f"[RideThread]: Enviando dados para SendRideDataQueue ({file_name})...")
                 ride_data_msg = RideDataMsg(
                     file_name=file_name,
                     telemetry_log=self._telemetry_log

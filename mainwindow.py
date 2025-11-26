@@ -112,14 +112,17 @@ class MainWindow(QMainWindow):
 
         #Threads
         #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
-        self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue)
+        self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue,self.create_msg_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
 
-        self.bluetooth_thread = BleManager(self.send_ride_data_queue, self.process_crank_data_queue, self.file_manager_queue)
-        from teste.ride.simula_ble import MockBleNanoThread
+        self.bluetooth_thread = BleManager(
+            sendRideDataQueue =self.send_ride_data_queue,
+            ProcessCrankDataQueue =self.crank_reading_queue,
+            FileManagerQueue= self.file_manager_queue)
+        #from simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
         ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
-        self.bluetooth_thread = MockBleNanoThread(self.process_crank_data_queue, ride_path)
+        #self.bluetooth_thread = MockBleNanoThread(self.xprocess_crank_data_queue, ride_path)
         
         self.shared_ride_state = RideState(app_instance)
         self.ride_thread = RideThread(
@@ -166,6 +169,7 @@ class MainWindow(QMainWindow):
         self.shared_ride_state.state_changed.connect(self._on_ride_state_change) 
         self.shared_ride_state.state_changed.connect(self.map_widget.change_plotting_state)       
         self.bluetooth_thread.app_connection_status.connect(self.change_app_bt_icon)
+        self.file_manager_thread.id.connect(self.ride_thread.set_ride_id)
         #Connections
         
         self.gps_processor_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
@@ -185,6 +189,12 @@ class MainWindow(QMainWindow):
         #self.gps_gather_thread.start()
         self.gps_processor_thread.start()
         #self.gps_tester_thread.start()
+        self.ride_thread.start()
+        self.file_manager_thread.start()
+        self.msg_creator_thread.start()
+        self.crank_parser_thread.start()
+        self.crank_processor_thread.start()
+
 
         self.bluetooth_thread.start()
 
@@ -194,6 +204,12 @@ class MainWindow(QMainWindow):
         self.gps_processor_thread.stop()
         #self.gps_tester_thread.stop()
         self.bluetooth_thread.stop()
+        self.ride_thread.stop()
+        self.file_manager_thread.stop()
+        self.msg_creator_thread.stop()
+        self.crank_parser_thread.stop()
+        self.crank_processor_thread.stop()
+
         event.accept()
 
     def send_sim_data(self):

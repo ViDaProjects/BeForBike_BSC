@@ -181,6 +181,8 @@ class BleManager(QThread):
             """
             reading = CrankReading(data_dict['w'], data_dict['a'])
             #logging.info(reading)
+            #print(f"Recebeu chunk de {reading})")
+
             self.ProcessCrankDataQueue.put(reading)
 
     def _disconnect_callback(self, client):
@@ -235,7 +237,7 @@ class BleManager(QThread):
         return False
 
     async def _persistent_connection_task(self, address):
-        MAX_RETRIES = 3
+        MAX_RETRIES = 1 #TODO: 3
         RETRY_DELAY_SECONDS = 5
         retry_count = 0
         while self.is_running and retry_count < MAX_RETRIES:

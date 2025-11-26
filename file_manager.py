@@ -24,7 +24,7 @@ class FileManagerThread(QThread):
         self.SendDataQueue = SendDataQueue
        
 
-        self.pasta_alvo = Path("/home/joao/faculdade/oficinas3/ride/fileCreator/rides")
+        self.pasta_alvo = Path("./rides")
         self.count_rides_file = self.pasta_alvo / "ride_count.txt"
         self.app = app
 
@@ -77,6 +77,7 @@ class FileManagerThread(QThread):
             try:
                 data = self.FileManagerQueue.get()
                 comando = data.msg_id
+                logging.info(f"[FILE MANAGER]Comando recebido na FileManagerThread: {data}")
                 match comando:
                     case FileMngMsgId.CREATE_FILE:
                         self.save_data(data.file_name,data.telemetry_list)
@@ -112,11 +113,13 @@ class FileManagerThread(QThread):
                 file.write(str(new_id))
                 file.truncate()
             
+            logging.info(f"[FILE MANAGER]EBAAA ID FOI \n\n {new_id}")
 
             self.id.emit(new_id)
 
+
         except Exception as e:
-            logging.error(f"Erro ao obter ID da ride: {e}")
+            logging.info(f"[FILE MANAGER]Erro ao obter ID da ride: {e}")
 
     def save_data(self,file_name, lista_dados):
         
