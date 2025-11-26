@@ -45,8 +45,7 @@ class GpsSentences:
 @dataclass
 class GpsData:
     """ Represents GPS-related measurements. """
-    timestamp: str
-    real_time: datetime
+    timestamp: str # To undo stringification: datetime.strptime(timestamp, "%H:%M:%S")
     latitude: float
     longitude: float
     altitude: float

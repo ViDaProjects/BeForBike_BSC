@@ -150,8 +150,7 @@ class GpsProcessorThread(QThread):
                 )
 
                 gps_data_msg = GpsData(
-                    timestamp = self._cached_gga.timestamp,
-                    real_time = real_time,
+                    timestamp = self._cached_gga.timestamp.strftime("%H:%M:%S"), # To undo string: datetime.strptime(timestamp, "%H:%M:%S")
                     latitude = self._cached_gga.latitude,
                     longitude = self._cached_gga.longitude,
                     altitude= safe_altitude,
@@ -176,7 +175,7 @@ class GpsProcessorThread(QThread):
                 send_data = ProcessedDataMsg(
                     data_origin = TelemetryOrigin.GPS,
                     data = gps_data_msg,
-                    info = PacketInfo(ride_id=None, date=gps_data_msg.timestamp, time=gps_data_msg.timestamp)
+                    info = PacketInfo(ride_id=None, date=real_time.strftime("%Y-%m-%d %H:%M:%S"), time=real_time.strftime("%H:%M:%S"),)
                 )
                 self.create_msg_queue.put(send_data)
                 

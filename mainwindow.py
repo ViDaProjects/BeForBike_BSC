@@ -290,7 +290,7 @@ class MainWindow(QMainWindow):
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = True
             if self.its_first_fix:
-                self.update_rtc_by_gps.emit(data.gps.real_time)
+                self.update_rtc_by_gps.emit(data.info.date)
                 self.its_first_fix = False
 
         elif data.gps.fix_quality == 0 and self.has_fix_position:
@@ -300,6 +300,7 @@ class MainWindow(QMainWindow):
     
     @Slot(datetime)
     def update_clock_from_gps(self, real_time):
+        real_time = datetime.strptime(real_time, "%Y-%m-%d %H:%M:%S")
         updater = GPSClock()
         updater.update_time(real_time)
 
