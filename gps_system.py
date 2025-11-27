@@ -144,13 +144,13 @@ class GpsProcessorThread(QThread):
                     # Ensure it is a float if it exists
                     safe_altitude = float(self._cached_gga.altitude)
 
-                real_time = datetime.combine(
-                    self._cached_rmc.datestamp,
-                    self._cached_rmc.timestamp  # or _cached_gga.timestamp
-                )
+                if self._cached_gga.timestamp:
+                    cached_gga = self._cached_gga.timestamp.strftime("%H:%M:%S")
+                else: 
+                    cached_gga = ""
 
                 gps_data_msg = GpsData(
-                    timestamp = self._cached_gga.timestamp.strftime("%H:%M:%S"), # To undo string: datetime.strptime(timestamp, "%H:%M:%S")
+                    timestamp = cached_gga, # To undo string: datetime.strptime(timestamp, "%H:%M:%S")
                     latitude = self._cached_gga.latitude,
                     longitude = self._cached_gga.longitude,
                     altitude= safe_altitude,
@@ -172,10 +172,19 @@ class GpsProcessorThread(QThread):
                 
                 self.update_ui.emit(show_data)
                 """
+
+                if self._cached_rmc.datestamp and self._cached_rmc.timestamp:
+                    real_time = datetime.combine(
+                        self._cached_rmc.datestamp,
+                        self._cached_rmc.timestamp  # or _cached_gga.timestamp
+                    ).strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    real_time = ""
+
                 send_data = ProcessedDataMsg(
                     data_origin = TelemetryOrigin.GPS,
                     data = gps_data_msg,
-                    info = PacketInfo(ride_id=None, date=real_time.strftime("%Y-%m-%d %H:%M:%S"), time=real_time.strftime("%H:%M:%S"),)
+                    info = PacketInfo(ride_id=None, date=real_time, time=real_time,)
                 )
                 self.create_msg_queue.put(send_data)
                 

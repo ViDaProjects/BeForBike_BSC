@@ -19,7 +19,7 @@ from ui_form import Ui_MainWindow
 #from gps_map import MapWidget
 from gps_system import GpsGatherThread, GpsProcessorThread, TestGpsThread, MapWidget
 from comm_protocol import TelemetryMsg, CrankData, GpsData
-#from blinker_module import BlinkerSystem
+from blinker_module import BlinkerSystem
 from comm_protocol import GpsSentenceType, GpsSentences
 from bluetooth import BleManager
 from crank_parser import CrankParser
@@ -96,7 +96,7 @@ class MainWindow(QMainWindow):
         map_layout.addWidget(self.map_widget)
 
         #Blinker
-        #self.blinker = BlinkerSystem(app_instance)
+        self.blinker = BlinkerSystem(app_instance)
 
         #variables
         self.has_fix_position: bool = False
@@ -113,7 +113,8 @@ class MainWindow(QMainWindow):
         self.file_manager_queue = Queue()
 
         #Threads
-        #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
+        #Comment this line if needs to use simulated GPS
+        self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
         self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue, self.create_msg_queue)
         #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
         self.clear_crank_data_labels()
@@ -123,10 +124,11 @@ class MainWindow(QMainWindow):
             ProcessCrankDataQueue =self.crank_reading_queue,
             FileManagerQueue= self.file_manager_queue)
         
-        from teste.ride.simula_ble import MockBleNanoThread
+        #Simulated crank data
+        #from teste.ride.simula_ble import MockBleNanoThread
         #ride_path = "/home/oficinas3/david/BeForBike_BSC/teste/ride/fileCreator/rides/Ride44.json"
-        ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
-        self.bluetooth_thread = MockBleNanoThread(self.create_msg_queue, ride_path)
+        #ride_path = "/home/viviane/Documents/Oficinas3/BeForBike_BSC/teste/ride/fileCreator/rides/ride_46.json"
+        #self.bluetooth_thread = MockBleNanoThread(self.create_msg_queue, ride_path)
         
         self.shared_ride_state = RideState(app_instance)
         self.ride_thread = RideThread(
@@ -177,25 +179,25 @@ class MainWindow(QMainWindow):
         #Connections
         
 
-        """ CRIAR SINAL NO MsgCreatorThread PARA ATUALIZAR A UI COM DADOS NOVOS """
+        #Msg Creator update UI with current TelemetryMsg
         self.msg_creator_thread.update_ui.connect(self.update_ui_with_msg_creator_data)
         
       
-        #self.blinker.blinkerActivated.connect(self.active_blinker_icon)
-        #self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
+        self.blinker.blinkerActivated.connect(self.active_blinker_icon)
+        self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
 
         # --- Simulation Logic ---
-        self._sim_index = 0
+        """self._sim_index = 0
         self.sim_timer = QTimer(self)
         self.sim_timer.setInterval(1000) # Send new data every 2 seconds
         self.sim_timer.timeout.connect(self.send_sim_data)
 
         # Start the timer
         self.sim_timer.start()
-        
+        """
 
         #Start threads
-        #self.gps_gather_thread.start()
+        self.gps_gather_thread.start()
         self.gps_processor_thread.start()
 
         self.ride_thread.start()
@@ -208,7 +210,7 @@ class MainWindow(QMainWindow):
         self.bluetooth_thread.start()
 
     def closeEvent(self, event):
-        #self.gps_gather_thread.stop()
+        self.gps_gather_thread.stop()
         self.gps_processor_thread.stop()
         #self.gps_tester_thread.stop()
         self.bluetooth_thread.stop()

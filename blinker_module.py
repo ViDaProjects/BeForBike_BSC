@@ -122,18 +122,18 @@ class BlinkerSystem(QObject):
 
     def __init__(self, app_instance):
         super().__init__()
-        self.thread = QThread()
+        self.threado = QThread()
         self.worker = BlinkerSystemWorker()
-        self.worker.moveToThread(self.thread)
-        
+        self.worker.moveToThread(self.threado)
+
         self._stop_worker_requested.connect(self.worker.stop)
-        self.worker.finished.connect(self.thread.quit)
-        self.thread.started.connect(self.worker.setup_hardware)
+        self.worker.finished.connect(self.threado.quit)
+        self.threado.started.connect(self.worker.setup_hardware)
         self.worker._buttonPressed.connect(self.blinkerActivated)
         self._trigger_requested.connect(self.worker.do_trigger_blink)
-        self.thread.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        self.thread.finished.connect(app_instance.quit)
+        self.threado.finished.connect(self.worker.deleteLater)
+        self.threado.finished.connect(self.threado.deleteLater)
+        self.threado.finished.connect(app_instance.quit)
         
         self.left_button = Button(LEFT_BUTTON_PIN, pull_up=False)
         self.right_button = Button(RIGHT_BUTTON_PIN, pull_up=False)
@@ -141,7 +141,7 @@ class BlinkerSystem(QObject):
         self.left_button.when_pressed = self.handle_left_press
         self.right_button.when_pressed = self.handle_right_press
         
-        self.thread.start()
+        self.threado.start()
 
     def handle_left_press(self):
         self._trigger_requested.emit("left")
@@ -150,6 +150,6 @@ class BlinkerSystem(QObject):
         self._trigger_requested.emit("right")
 
     def cleanup(self):
-        if self.thread.isRunning():
+        if self.threado.isRunning():
             self._stop_worker_requested.emit()
-            self.thread.wait()
+            self.threado.wait()
