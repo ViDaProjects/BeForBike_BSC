@@ -81,7 +81,7 @@ class CrankProcessor(QThread):
         data = CrankData(self.power, self.cadence, self.joules, self.calories, self.speed_ms ,self.speed, self.distance)
         Telemetry = ProcessedDataMsg(TelemetryOrigin.CRANK, data)
         self.out_queue.put(Telemetry)
-        print(Telemetry)
+        #print(Telemetry)
         #print(self.calories)
         #print(average)
 
