@@ -152,10 +152,8 @@ class RideThread(QThread):
                 try:
                     telemetry_msg: TelemetryMsg = self.add_ride_data_queue.get(timeout=0.1)
                     if telemetry_msg:
-                        telemetry_msg.info.ride_id = ride_id_for_this_ride
-                        #telemetry_msg.info = PacketInfo(ride_id=ride_id_for_this_ride,date="None",time="None")
+                        telemetry_msg.info = PacketInfo(ride_id=ride_id_for_this_ride,date=telemetry_msg.info.date,time=telemetry_msg.info.time)
                         logging.info(f"[RideThread]: Coletado ponto de telemetria  {telemetry_msg}.")
-                        print("\n\n\n\n\n\n\n")
                     else:
                         #logging.info("RideThread: Mensagem sem 'info', pulando.")
                         continue
