@@ -52,7 +52,7 @@ class GPSClock:
     def __init__(self):
         self.rtc = None
         try:
-            from ds1302 import DS1302
+            #from ds1302 import DS1302
             self.rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
             logging.info("[CLOCK_UPDATER] RTC DS1302 inicializado com sucesso.")
         except Exception as e:
@@ -66,6 +66,7 @@ class GPSClock:
         dt_local = dt_utc.astimezone(fuso_local_desejado)
 
         if dt_local:
+            
             day_of_week_to_set = dt_local.isoweekday() # 1=Seg, ... 7=Dom
 
             date_list = [
@@ -79,10 +80,33 @@ class GPSClock:
             ]
             
             try:
-                self.rtc.setDateTime(date_list)
+                #from ds1302 import DS1302
+                rtc = DS1302(CLK_PIN, DAT_PIN, RST_PIN)
+                rtc.setDateTime(date_list)
                 logging.info("[CLOCK_UPDATER] Time updated correctly")
+                logging.info("[GPS_CLOCK_UPDATER] Reading local time from DS1302...")
+                second = rtc.second()
+                minute = rtc.minute()
+                hour = rtc.hour()
+                day = rtc.day()
+                month = rtc.month()
+                year = rtc.year() + 2000
+
+                # 2. Format it into a string
+                new_system_time = f"{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}"
+
+                logging.info(f"[CLOCK_UPDATER] Time from RTC (Local): {new_system_time}")
+
+                # 3. Use 'os.system' to set the system time
+                logging.info("[CLOCK_UPDATER] Setting system time from RTC...")
+                status = os.system(f"sudo date -s '{new_system_time}'") # <<< MUDAN ^gA AQUI (removido --utc)
+                logging.info("[CLOCK_UPDATER] {status}")
             except Exception as e:
                 logging.error(f"[CLOCK_UPDATER] Erro ao tentar escrever no RTC: {e}")
+
+            finally:
+                if 'rtc' in locals():
+                    self.rtc.cleanupGPIO()
 
         try:
             

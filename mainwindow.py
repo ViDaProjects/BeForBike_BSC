@@ -290,6 +290,7 @@ class MainWindow(QMainWindow):
             self.ui.gps_icon_label.setPixmap(pixmap)
             self.has_fix_position = True
             if self.its_first_fix:
+                print(data)
                 self.update_rtc_by_gps.emit(data.info.date)
                 self.its_first_fix = False
 

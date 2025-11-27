@@ -78,7 +78,6 @@ class CrankParser(QThread):
         try:
 
             ble_data =self.in_queue.get(block=True,timeout=0.2)
-            #print(ble_data)
 
             #logging.info("[CankParser] %s", ble_data)
             # Colocar booleano se teve leitura (ou bloquear)
@@ -134,7 +133,8 @@ class CrankParser(QThread):
             self.accel = []
             
             data = PowerData(cadence = self.cadence,power = self.power * 10)
-            logging.info(data)
+            #logging.info(data)
+            print(f"antes de put: {data}")
             self.out_queue.put(data)
         
             # Jogar power e cadence na tabela
