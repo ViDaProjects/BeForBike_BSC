@@ -172,7 +172,7 @@ class GpsProcessorThread(QThread):
                 
                 self.update_ui.emit(show_data)
                 """
-
+                print(self._cached_rmc)
                 if self._cached_rmc.datestamp and self._cached_rmc.timestamp:
                     real_time = datetime.combine(
                         self._cached_rmc.datestamp,

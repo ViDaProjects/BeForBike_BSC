@@ -132,7 +132,7 @@ class CrankParser(QThread):
             self.weight = 0
             self.accel = []
             
-            data = PowerData(cadence = self.cadence,power = self.power * 10)
+            data = PowerData(cadence = self.cadence,power = self.power * 9.3)
             #logging.info(data)
             print(f"antes de put: {data}")
             self.out_queue.put(data)

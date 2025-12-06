@@ -280,16 +280,21 @@ class MainWindow(QMainWindow):
 
         #update map
         self.map_widget.update_map_plotting(data.gps.latitude, data.gps.longitude, data.gps.altitude)
-
         #Update GPS icon and write RTC at first fix
-        if data.gps.fix_quality > 0 and not self.has_fix_position:
-            pixmap = QPixmap("icons/gps_on.svg")
-            self.ui.gps_icon_label.setPixmap(pixmap)
-            self.has_fix_position = True
+        try:
             if self.its_first_fix:
                 print(data)
                 self.update_rtc_by_gps.emit(data.info.date)
                 self.its_first_fix = False
+        except:
+            logging.info("[mainwindow] couldn't emit data for clock update")
+
+        if data.gps.fix_quality > 0 and not self.has_fix_position:
+            
+            pixmap = QPixmap("icons/gps_on.svg")
+            self.ui.gps_icon_label.setPixmap(pixmap)
+            self.has_fix_position = True
+            
 
         elif data.gps.fix_quality == 0 and self.has_fix_position:
             pixmap = QPixmap("icons/gps_off.svg")

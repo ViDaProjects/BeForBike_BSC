@@ -90,6 +90,7 @@ class MsgCreatorThread(QThread):
                 logging.error(f"Erro na thread createmessage: {e}")
 
     def gps_data(self,data):
+        
         try:
 
             self.msg.gps = data.data

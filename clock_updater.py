@@ -33,10 +33,10 @@ class DateChangeWatcher(QObject):
             self.emit_text()
 
 import os
-#try:
-#    from ds1302 import DS1302
-#except:
-#    logging.info("[CLOCK_UPDATER] Real time clock library does not exist")
+try:
+    from ds1302 import DS1302
+except:
+    logging.info("[CLOCK_UPDATER] Real time clock library does not exist")
 from datetime import datetime
 from datetime import datetime, timezone, timedelta
 import logging
