@@ -135,8 +135,6 @@ class BleManager(QThread):
             logging.info("Loop asyncio (BleManager) finalizado.")
             self.main_loop.close()
             
-    # --- O RESTANTE DO SEU CÓDIGO (LÓGICA ASYNCIO) PERMANECE O MESMO ---
-    # --- (Apenas _notification_handler foi movido para cima) ---
 
     def _notification_handler(self, sender, data, address):
         logging.debug(f"Recebeu chunk de {address}: {data}")
@@ -336,7 +334,6 @@ class BleManager(QThread):
         try:
             while(self.is_running):
                 
-                # --- VERIFICA CONEXÃO ---
                 if not self.mobile_client_address:
                     logging.debug("Tarefa de envio pausada (sem celular conectado).")
                     await asyncio.sleep(1) 
@@ -366,7 +363,6 @@ class BleManager(QThread):
                         #data_list = data_list[1:]
                         source_queue_name = "principal (queue1)"
                     except Empty:
-                        # Ambas as filas estão vazias
                         if not(self.asked):
                             self.asked = True
                             request = FileManagerMsg(msg_id=FileMngMsgId.SEARCH_FILES)
@@ -384,7 +380,7 @@ class BleManager(QThread):
                     continue
 
                 logging.info(f"Iniciando envio de {len(data_list)} pacotes ('chunks') para {client_address}...")
-                BATCH_SIZE = 10
+                BATCH_SIZE = 3
                 for i in range(0, len(data_list), BATCH_SIZE):                    
                     if not self.is_running or self.mobile_client_address != client_address or not client.is_connected:
                         logging.warning(f"Envio interrompido no pacote {i+1}. O cliente desconectou ou mudou.")
@@ -454,12 +450,11 @@ class BleManager(QThread):
                         break 
                 
                 else:
-                    # Este 'else' só executa se o loop 'for' terminar SEM 'break'
                     logging.info(f"Envio de {len(data_list)} pacotes concluído com sucesso.")
                     if self.ride_name: # Garante que só deleta se o nome do ride foi pego da fila principal
-
-                        self.FileManagerQueue.put(FileManagerMsg(file_name=self.ride_name, msg_id=FileMngMsgId.DELETE_FILE))
-                        self.ride_name= None # Limpa para o próximo loop
+                        #TODO: descomentar
+                        #self.FileManagerQueue.put(FileManagerMsg(file_name=self.ride_name, msg_id=FileMngMsgId.DELETE_FILE))
+                        self.ride_name= None 
 
         
         except asyncio.CancelledError:

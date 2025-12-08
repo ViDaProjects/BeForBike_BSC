@@ -178,13 +178,17 @@ class GpsProcessorThread(QThread):
                         self._cached_rmc.datestamp,
                         self._cached_rmc.timestamp  # or _cached_gga.timestamp
                     ).strftime("%Y-%m-%d %H:%M:%S")
+                    hourly = datetime.combine(
+                        self._cached_rmc.datestamp,
+                        self._cached_rmc.timestamp  # or _cached_gga.timestamp
+                    ).strftime("%H:%M:%S")
                 else:
                     real_time = ""
 
                 send_data = ProcessedDataMsg(
                     data_origin = TelemetryOrigin.GPS,
                     data = gps_data_msg,
-                    info = PacketInfo(ride_id=None, date=real_time, time=real_time,)
+                    info = PacketInfo(ride_id=None, date=real_time, time=hourly,)
                 )
                 self.create_msg_queue.put(send_data)
                 

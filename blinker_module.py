@@ -6,8 +6,8 @@ from rpi_ws281x import *
 from gpiozero import Button
 
 SERVO_PIN = 12
-LEFT_BUTTON_PIN = 5
-RIGHT_BUTTON_PIN = 6
+LEFT_BUTTON_PIN = 6
+RIGHT_BUTTON_PIN = 5
 
 LED_COUNT = 6
 LED_PIN = 18
