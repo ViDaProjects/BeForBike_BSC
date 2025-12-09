@@ -254,6 +254,7 @@ class BleManager(QThread):
                 #self.device_desconnected_nano.emit(address) 
             else:
                 self.app_connection_status.emit(False)
+                self.is_sending = False
                 #self.device_desconnected_tel.emit(address)
 
 

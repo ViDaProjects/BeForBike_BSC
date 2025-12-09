@@ -158,9 +158,9 @@ class MainWindow(QMainWindow):
 
         #Threads
         #Comment this line if needs to use simulated GPS
-        #self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
+        self.gps_gather_thread = GpsGatherThread(self.process_gps_queue)
         self.gps_processor_thread = GpsProcessorThread(self.process_gps_queue, self.create_msg_queue)
-        self.gps_tester_thread = TestGpsThread(self.show_data_queue)
+        #self.gps_tester_thread = TestGpsThread(self.show_data_queue)
         self.clear_crank_data_labels()
 
         self.bluetooth_thread = BleManager(
@@ -229,16 +229,16 @@ class MainWindow(QMainWindow):
       
         self.blinker.blinkerActivated.connect(self.active_blinker_icon)
         self.blinker.worker.blinkerDeactivated.connect(self.deactive_blinker_icon)
-
+        '''
         # --- Simulation Logic ---
         self._sim_index = 0
         self.sim_timer = QTimer(self)
         self.sim_timer.setInterval(1000) # Send new data every 2 seconds
         self.sim_timer.timeout.connect(self.send_sim_data)
-
+        
         # Start the timer
         self.sim_timer.start()
-        
+        '''
 
         #Start threads
         self.gps_gather_thread.start()

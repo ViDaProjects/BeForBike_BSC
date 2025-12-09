@@ -184,11 +184,12 @@ class GpsProcessorThread(QThread):
                     ).strftime("%H:%M:%S")
                 else:
                     real_time = ""
+                    hourly = ""
 
                 send_data = ProcessedDataMsg(
                     data_origin = TelemetryOrigin.GPS,
                     data = gps_data_msg,
-                    info = PacketInfo(ride_id=None, date=real_time, time=hourly,)
+                    info = PacketInfo(ride_id=None, date=real_time, time=hourly)
                 )
                 self.create_msg_queue.put(send_data)
                 
