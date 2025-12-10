@@ -75,11 +75,11 @@ class Ui_MainWindow(object):
 
         self.satellities_label = QLabel(self.frame_5)
         self.satellities_label.setObjectName(u"satellities_label")
-        self.satellities_label.setMinimumSize(QSize(20, 0))
+        self.satellities_label.setMinimumSize(QSize(30, 0))
         self.satellities_label.setMaximumSize(QSize(20, 16777215))
         self.satellities_label.setFont(font1)
 
-        self.horizontalLayout_11.addWidget(self.satellities_label)
+        self.horizontalLayout_11.addWidget(self.satellities_label, 0, Qt.AlignmentFlag.AlignLeft)
 
         self.label_23 = QLabel(self.frame_5)
         self.label_23.setObjectName(u"label_23")
@@ -95,10 +95,11 @@ class Ui_MainWindow(object):
 
         self.fix_quality_label = QLabel(self.frame_5)
         self.fix_quality_label.setObjectName(u"fix_quality_label")
-        self.fix_quality_label.setMinimumSize(QSize(20, 0))
+        self.fix_quality_label.setMinimumSize(QSize(15, 0))
         self.fix_quality_label.setFont(font1)
+        self.fix_quality_label.setMargin(0)
 
-        self.horizontalLayout_11.addWidget(self.fix_quality_label)
+        self.horizontalLayout_11.addWidget(self.fix_quality_label, 0, Qt.AlignmentFlag.AlignLeft)
 
 
         self.horizontalLayout_2.addWidget(self.frame_5, 0, Qt.AlignmentFlag.AlignLeft)
@@ -150,7 +151,7 @@ class Ui_MainWindow(object):
         self.app_bt_label.setObjectName(u"app_bt_label")
         self.app_bt_label.setMinimumSize(QSize(50, 0))
         self.app_bt_label.setMaximumSize(QSize(60, 16777215))
-        self.app_bt_label.setPixmap(QPixmap(u"icons/app_bt_off.png"))
+        self.app_bt_label.setPixmap(QPixmap(u"icons/app_bt_off.svg"))
         self.app_bt_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.horizontalLayout_4.addWidget(self.app_bt_label, 0, Qt.AlignmentFlag.AlignRight)

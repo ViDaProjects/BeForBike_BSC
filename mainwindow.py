@@ -28,6 +28,7 @@ from createmsg import MsgCreatorThread
 from file_manager import FileManagerThread
 from ride import RideThread
 from ride_state import RideState
+import qdarktheme
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -382,10 +383,10 @@ class MainWindow(QMainWindow):
     @Slot()
     def change_app_bt_icon(self, app_state):
         if app_state:
-            pixmap = QPixmap("icons/app_bt_on.png")
+            pixmap = QPixmap("icons/app_bt_on.svg")
             self.ui.app_bt_label.setPixmap(pixmap)
         else:
-            pixmap = QPixmap("icons/app_bt_off.png")
+            pixmap = QPixmap("icons/app_bt_off.svg")
             self.ui.app_bt_label.setPixmap(pixmap)
 
     @Slot()
@@ -408,6 +409,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
+    qdarktheme.setup_theme("dark")
     # 1. Set the signal handler for SIGINT (Ctrl+C)
     # This allows Ctrl+C to be processed by the Python interpreter
     # while the Qt event loop is running.
