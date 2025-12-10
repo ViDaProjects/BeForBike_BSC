@@ -327,7 +327,7 @@ class MainWindow(QMainWindow):
         self.map_widget.update_map_plotting(data.gps.latitude, data.gps.longitude, data.gps.altitude)
         #Update GPS icon and write RTC at first fix
         try:
-            if self.its_first_fix:
+            if self.its_first_fix and data.info.date != "":
                 print(data)
                 self.update_rtc_by_gps.emit(data.info.date)
                 self.its_first_fix = False
