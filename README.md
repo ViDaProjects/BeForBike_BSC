@@ -1,4 +1,4 @@
-# BeForBike_BSC
+# BeForBike Bicycle Smart Computer
 
 ![Display](https://github.com/ViDaProjects/BeForBike_BSC/blob/main/assets/display.png)
 
